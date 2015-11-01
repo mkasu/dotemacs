@@ -1,0 +1,8 @@
+\#
+.python-environments/
+bookmarks
+elpa/
+irony/
+projectile-bookmarks.eld
+projectile.cache
+recentf
