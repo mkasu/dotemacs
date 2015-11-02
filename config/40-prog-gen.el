@@ -61,14 +61,13 @@ M-x compile.
     :init 
     (helm-projectile-on)
     )
-  (use-package helm-swoop
-    :ensure t
-    :bind ("C-c C-v" . helm-swoop)
-    :init
-    (defvar helm-swoop-split-window-function
-      (lambda ($buf)
-        (display-buffer $buf)))
-    )
+  )
+
+;; == swiper ==
+
+(use-package swiper-helm
+  :ensure t
+  :bind ("C-c C-v" . swiper)
   )
 
 ;; == magit ==
