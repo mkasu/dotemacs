@@ -64,6 +64,10 @@ M-x compile.
   (use-package helm-swoop
     :ensure t
     :bind ("C-c C-v" . helm-swoop)
+    :init
+    (defvar helm-swoop-split-window-function
+      (lambda ($buf)
+        (display-buffer $buf)))
     )
   )
 
@@ -83,5 +87,12 @@ M-x compile.
   :config
   (progn
     (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++11")))))
+
+;; == ag ==
+
+(use-package helm-ag
+  :ensure t
+  :bind ("C-c C-f" . helm-do-ag-project-root)
+  )
 
 ;;; 40-prog-gen.el ends here
