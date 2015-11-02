@@ -48,4 +48,9 @@
   (cmake-ide-setup)
   )
 
+(use-package cmake-mode
+  :ensure t
+  :mode (("/CMakeLists\\.txt\\'" . cmake-mode)
+	 ("\\.cmake\\'" . cmake-mode)))
+
 ;;; 41-prog-cpp.el ends here
