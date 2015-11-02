@@ -53,4 +53,10 @@
   :mode (("/CMakeLists\\.txt\\'" . cmake-mode)
 	 ("\\.cmake\\'" . cmake-mode)))
 
+(use-package clang-format
+  :ensure t
+  :bind (("C-M-<tab>" . clang-format-buffer)
+    )
+  )
+
 ;;; 41-prog-cpp.el ends here
