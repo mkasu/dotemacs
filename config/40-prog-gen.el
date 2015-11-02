@@ -63,7 +63,7 @@ M-x compile.
     )
   (use-package helm-swoop
     :ensure t
-    :bind ("C-c C-a" . helm-swoop)
+    :bind ("C-c C-v" . helm-swoop)
     )
   )
 
