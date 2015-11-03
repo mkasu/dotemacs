@@ -11,6 +11,15 @@
                 (font-lock-add-keywords nil
                                         '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
 
+;; == Code folding ==
+(add-hook 'c-mode-common-hook
+  (lambda()
+    (local-set-key (kbd "C-c <right>") 'hs-show-block)
+    (local-set-key (kbd "C-c <left>")  'hs-hide-block)
+    (local-set-key (kbd "C-c <up>")    'hs-hide-all)
+    (local-set-key (kbd "C-c <down>")  'hs-show-all)
+    (hs-minor-mode t)))
+
 ;; == Make .h an extension for cpp ==
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
