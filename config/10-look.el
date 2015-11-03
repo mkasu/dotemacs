@@ -27,8 +27,12 @@
 (setq visible-bell nil) ;; The default
 (setq ring-bell-function 'ignore)
 
+;; Custom themes
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+
 ;; Theme
-(load-theme 'wombat t)
+;;(load-theme 'wombat t)
+(load-theme 'dracula)
 
 (use-package powerline
   :ensure t
