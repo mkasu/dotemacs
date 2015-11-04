@@ -44,10 +44,12 @@
 
 ;; === Documents ===
 (load-file "~/.emacs.d/config/30-org.el")
+(load-file "~/.emacs.d/config/32-other.el")
 
 ;; === Programming ===
 (load-file "~/.emacs.d/config/40-prog-gen.el")
 (load-file "~/.emacs.d/config/41-prog-cpp.el")
 (load-file "~/.emacs.d/config/42-prog-python.el")
+(load-file "~/.emacs.d/config/43-prog-ruby.el")
 
 ;;; init.el ends here
