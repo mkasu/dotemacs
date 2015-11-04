@@ -27,6 +27,10 @@
 (setq visible-bell nil) ;; The default
 (setq ring-bell-function 'ignore)
 
+;; Show matching parentheses
+(setq show-paren-delay 0)
+(show-paren-mode 1)
+
 ;; Custom themes
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 
