@@ -29,11 +29,7 @@
 (desktop-save-mode 1)
 
 ;; Backup
-(setq make-backup-files nil)
-(setq backup-directory-alist
-     `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-     `((".*" ,temporary-file-directory t)))
+(auto-save-mode 1)
 
 ;; 4 spaces for tab
 (setq-default indent-tabs-mode nil)
@@ -41,23 +37,6 @@
 (setq indent-line-function 'insert-tab)
 
 ;; Special window in bottom
-;; (global-set-key (kbd "C-c q") 'my-quit-bottom-side-windows)
-
-;; (add-to-list 'display-buffer-alist
-;;              `(,(rx bos "*" (* not-newline) "*" eos)
-;;                (display-buffer-in-side-window)
-;;                (reusable-frames . visible)
-;;                (inhibit-same-window . t)
-;;                (side            . bottom)
-;;                (window-height   . 0.25)))
-
-;; (defun my-quit-bottom-side-windows ()
-;;     "Quit side windows of the current frame."
-;;       (interactive)
-;;         (dolist (window (window-at-side-list))
-;;               (quit-window nil window)))
-
-
 (use-package popwin
   :ensure t
   :config
@@ -77,6 +56,16 @@
 (use-package helm
   :ensure t
   :config (helm-mode 1)
+  )
+
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :init (global-undo-tree-mode)
+  :config
+  (progn
+    (global-set-key (kbd "C-S-z") 'undo-tree-redo)
+    (global-set-key (kbd "C-z") 'undo)
+    )
   )
 
 ;;; 11-behave.el ends here
