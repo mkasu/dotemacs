@@ -67,7 +67,7 @@ M-x compile.
 
 (use-package swiper-helm
   :ensure t
-  :bind ("C-c C-v" . swiper)
+  :bind ("C-c C-g" . swiper)
   )
 
 ;; == magit ==
