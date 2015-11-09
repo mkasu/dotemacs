@@ -9,8 +9,10 @@
 (server-start)
 
 ;; OS X specific
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin:/Library/TeX/texbin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
+(setq exec-path (append exec-path '("/Library/TeX/texbin")))
+
 (setq ns-right-alternate-modifier nil)
 
 ;; Easy switching between windows
@@ -61,6 +63,7 @@
 (use-package undo-tree
   :diminish undo-tree-mode
   :init (global-undo-tree-mode)
+  :ensure t
   :config
   (progn
     (global-set-key (kbd "C-S-z") 'undo-tree-redo)
