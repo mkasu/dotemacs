@@ -71,4 +71,8 @@
     )
   )
 
+(use-package which-key
+  :config (which-key-mode)
+  )
+
 ;;; 11-behave.el ends here
