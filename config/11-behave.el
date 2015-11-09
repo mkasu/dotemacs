@@ -75,4 +75,8 @@
   :config (which-key-mode)
   )
 
+
+(use-package desktop+
+  :ensure t)
+
 ;;; 11-behave.el ends here
