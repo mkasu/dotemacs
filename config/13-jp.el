@@ -55,6 +55,36 @@
 
  (setq skk-show-candidates-always-pop-to-buffer t) ; 変換候補の表示位置
  (setq skk-henkan-show-candidates-rows 2) ; 候補表示件数を2列に
-)
+ (setq skk-delete-implies-kakutei nil) ; ▼モードで一つ前の候補を表示
+ (setq skk-show-annotation t)		  ; Annotation
+ (setq skk-henkan-strict-okuri-precedence t) ; 送り仮名が厳密に正しい候補を優先して表示
+ )
+
+
+(use-package skk-server
+  :config
+  (require 'skk-vars)
+  ;; 辞書サーバを利用する場合の設定
+  (setq ;; skk-server-host "0.0.0.0"
+        skk-server-host "localhost" ;; windows だとこっち
+        skk-server-prog "google-ime-skk" ;; パスは通っているようだ. 
+	skk-server-portnum 1178)
+
+  ;; 辞書サーバが使用不能になると辞書ファイルを 
+  ;; Emacs のバッファに読み込んで 検索を行う.
+  (setq skk-server-inhibit-startup-server nil) ;; 通信エラー時はローカル辞書を.
+  (setq skk-server-jisyo "~/.emacs.d/dict/SKK-JISYO.L")
+
+  (eval-after-load "skk"
+    '(progn
+       (add-to-list 'skk-search-prog-list
+		    '(skk-server-completion-search) t)
+       (add-to-list 'skk-search-prog-list
+		    '(skk-comp-by-server-completion) t)))
+
+  ;; 辞書登録の際に送り仮名を削除
+  (setq skk-check-okurigana-on-touroku 'auto)
+  ;;漢字登録のミスをチェックする
+  (setq skk-check-okurigana-on-touroku t))
 
 ;;; 13-jp.el ends here 
