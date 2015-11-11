@@ -37,7 +37,7 @@
            )
           )
         )
-  (setq org-agenda-files (quote ("~/org")))
+  (setq org-agenda-files (quote ("~/Dropbox/org")))
   (setq org-log-done 'time)
   (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-skip-scheduled-if-done t)
@@ -60,7 +60,7 @@
   :config
   (progn
     (setq org-projectile:projects-file 
-          "~/org/projects.org")
+          "~/Dropbox/org/projects.org")
     (setq org-agenda-files (append org-agenda-files (org-projectile:todo-files)))
     (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "p"))
     (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "l" "* TODO %? %a\n" "Linked Project TODO"))
