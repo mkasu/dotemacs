@@ -33,6 +33,11 @@
 ;; Backup
 (auto-save-mode 1)
 
+;; Read from hard-disk
+;; Especially useful when syncing between different computers (Dropbox)
+;; Or using other editors than emacs simultaneously (why would anyone not use Emacs)
+(global-auto-revert-mode 1)
+
 ;; 4 spaces for tab
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
