@@ -12,6 +12,14 @@
 
 (require 'use-package)
 
+;; 日本のカレンダー
+(use-package japanese-holidays
+  :ensure t
+  :config
+  (setq calendar-holidays
+        (append japanese-holidays local-holidays other-holidays))
+  (setq mark-holidays-in-calendar t))
+
 ;; ローマ字で日本語の検索
 ;; (use-package migemo
 ;;   :ensure t
