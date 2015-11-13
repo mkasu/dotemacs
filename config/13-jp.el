@@ -21,18 +21,18 @@
   (setq mark-holidays-in-calendar t))
 
 ;; ローマ字で日本語の検索
-;; (use-package migemo
-;;   :ensure t
-;;   :defer 20
-;;   :config
-;;   (migemo-init)
-;;   (setq migemo-options '("-q" "--emacs"))
-;;   (setq migemo-user-dictionary nil)
-;;   (setq migemo-regex-dictionary nil)
-;;   (setq migemo-coding-system 'utf-8-unix)
+(use-package migemo
+  :ensure t
+  :demand t
+  :config
+  (setq migemo-user-dictionary nil)
+  (setq migemo-regex-dictionary nil)
+  (setq migemo-coding-system 'utf-8-unix)
 
-;;   (setq migemo-command "cmigemo")
-;;   (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict"))
+  (setq migemo-command "cmigemo")
+  (setq migemo-options '("-q" "--emacs"))
+  (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+  (migemo-init))
 
 ;; 日本語入力
 (defconst my-lisp-dir (cond
