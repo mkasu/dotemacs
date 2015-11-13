@@ -30,8 +30,19 @@
 ;; Session management
 (desktop-save-mode 1)
 
-;; Backup
+;; Backup behaviour
 (auto-save-mode 1)
+
+(defvar --backup-directory (concat user-emacs-directory "backups"))
+(if (not (file-exists-p --backup-directory))
+        (make-directory --backup-directory t))
+(setq backup-directory-alist `(("." . ,--backup-directory)))
+
+(setq backup-by-copying t)
+(setq delete-old-versions t
+  kept-new-versions 9
+  kept-old-versions 6
+  version-control t)
 
 ;; Read from hard-disk
 ;; Especially useful when syncing between different computers (Dropbox)
@@ -43,7 +54,22 @@
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
 
+;; Terminal
+;; (defun popwin-term:ansi-term () 
+;;   (interactive)
+;;   (popwin:display-buffer-1
+;;   (or (get-buffer "*ansi-term*")
+;;       (save-window-excursion
+;;       (interactive)
+;;       (ansi-term "/usr/local/bin/zsh")))
+;;   :default-config-keywords '(:position :bottom :height 20 :stick t)))
+;; (global-set-key (kbd "C-x t") 'popwin-term:ansi-term)
+
+
+
 ;; Special window in bottom
+(require 'use-package)
+
 (use-package popwin
   :ensure t
   :config
@@ -51,13 +77,32 @@
     (popwin-mode 1)
     (push '(flycheck-error-list-mode :stick t) popwin:special-display-config)
     (push '("^\*helm.+\*$" :regexp t) popwin:special-display-config)
+    (push '("\\*ansi-term.*\\*" :regexp t) popwin:special-display-config)
     (add-hook 'helm-after-initialize-hook (lambda ()
                                           (popwin:display-buffer helm-buffer t)
                                           (popwin-mode -1)))
     (add-hook 'helm-cleanup-hook (lambda () (popwin-mode 1)))
+    (push '("*eshell*" :height 0.5) popwin:special-display-config)
     )
   )
 
+(defun eshell-pop (universal-argument)
+  "open eshell window using popwin-elf"
+  (interactive "P")
+  (let* ((eshell-buffer-name "*eshell*")
+         (eshell-buffer (get-buffer eshell-buffer-name))
+         (file-name (buffer-file-name (current-buffer)))
+         (current-directory (with-current-buffer (current-buffer) default-directory)))
+    (if eshell-buffer
+        (popwin:display-buffer eshell-buffer)
+      (eshell))
+    (when (and universal-argument file-name)
+      (eshell-kill-input)
+      (insert (concat "cd " current-directory))
+      (eshell-send-input)
+      (end-of-buffer))))
+(global-set-key (kbd "C-x t") 'eshell-pop)
+    
 ;;; === Packages ===
 
 (use-package helm
