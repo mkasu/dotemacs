@@ -101,7 +101,7 @@
       (insert (concat "cd " current-directory))
       (eshell-send-input)
       (end-of-buffer))))
-(global-set-key (kbd "C-x t") 'eshell-pop)
+(global-set-key (kbd "C-c t") 'eshell-pop)
     
 ;;; === Packages ===
 
