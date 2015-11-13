@@ -11,15 +11,6 @@
 (defun sacha/org-agenda-skip-scheduled ()
   (org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
 
-(defvar my/org-basic-task-template "* TODO %^{Task}
-SCHEDULED: %^t
-%<%Y-%m-%d %H:%M>
-%?
-" "Basic task data")
-
-
-
-
 (use-package org
   :ensure t
   :bind ("C-c a" . org-agenda)
@@ -66,7 +57,11 @@ SCHEDULED: %^t
         '(
           ("t" "Tasks" entry
            (file+headline "~/Dropbox/org/todo.org" "Inbox")
-           ,my/org-basic-task-template)
+           "* TODO %^{Task}
+SCHEDULED: %^t
+%<%Y-%m-%d %H:%M>
+%?
+")
           ("T" "Quick task" entry
            (file+headline "~/Dropbox/org/todo.org" "Inbox")
            "* TODO %^{Task}"
@@ -84,7 +79,12 @@ SCHEDULED: %^t
           ("j" "Japanese Grammar" entry
            (file+headline "~/Dropbox/org/japanese.org" "Grammar")
            "* %^{Title}
-%?"
+
+%?
+
+例文
+- 
+"
            )
           )
         )
