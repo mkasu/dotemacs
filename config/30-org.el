@@ -21,8 +21,10 @@
   (add-hook 'org-mode-hook 'flyspell-mode)
   ;; Agenda
   (setq org-agenda-window-setup 'current-window)
+  
+  (setq org-agenda-overriding-columns-format "%CATEGORY %50ITEM %SCHEDULED %DEADLINE")
   (setq org-agenda-custom-commands
-        '(("h" "Main view"
+        '(("H" "Detailed view"
            ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
                         (org-agenda-log-mode 1)
                         (org-agenda-start-on-weekday nil)         ;; calendar begins today
@@ -30,8 +32,30 @@
                         )
                     )         
             (alltodo ""
-                     ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
-                      (org-agenda-overriding-header "Unscheduled TODO entries: ")
+                     ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
+                      (org-agenda-overriding-header "Unscheduled TODO entries:")
+                      )
+                     )
+            (tags-todo "SCHEDULED>\"<+1w>\""
+                       ((org-agenda-overriding-header "Future TODO entries:")
+                        )
+                       )
+            (tags-todo "DEADLINE>\"<+1w>\""
+                       ((org-agenda-overriding-header "Future Deadlines:")
+                        )
+                       )
+            )
+           )
+          ("h" "Main view"
+           ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
+                        (org-agenda-log-mode 1)
+                        (org-agenda-start-on-weekday nil)         ;; calendar begins today
+                        (org-agenda-repeating-timestamp-show-all t)
+                        )
+                    )         
+            (alltodo ""
+                     ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
+                      (org-agenda-overriding-header "Unscheduled TODO entries:")
                       )
                      )
             )
