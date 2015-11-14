@@ -12,8 +12,9 @@
 
 ;; Font Faces
 (set-face-attribute 'default nil
-                    :family "Source Code Pro"
-                    :height 180
+                    ;;:family "Source Han Code JP"
+                    :family "Ricty Diminished"
+                    :height 210
                     :weight 'normal
                     :width 'normal)
 
@@ -40,13 +41,15 @@
 
 (require 'color)
   
-  (let ((bg (face-attribute 'default :background)))
-        (custom-set-faces
-               `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
-                    `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
-                         `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
-                              `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
-                                   `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+(let ((bg (face-attribute 'default :background)))
+  (custom-set-faces
+   `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
+   `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
+   `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
+   `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+   `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+
+(require 'use-package)
 
 (use-package powerline
   :ensure t
