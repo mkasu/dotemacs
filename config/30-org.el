@@ -67,6 +67,20 @@
   (setq org-agenda-skip-deadline-if-done t)
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+  (setq org-publish-project-alist
+        '(("html"
+           :base-directory "~/Dropbox/org/"
+           :base-extension "org"
+           :publishing-directory "~/Dropbox/org/exports"
+           :publishing-function org-html-publish-to-html)
+          ("pdf"
+           :base-directory "~/Dropbox/org/"
+           :base-extension "org"
+           :publishing-directory "~/Dropbox/org/exports"
+           :publishing-function org-latex-publish-to-pdf)
+          ("all" :components ("html" "pdf"))))
+  (setq org-latex-pdf-process
+        '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   ;; Run/highlight code using babel in org-mode
   (org-babel-do-load-languages
    'org-babel-load-languages
