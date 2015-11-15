@@ -12,9 +12,11 @@
 
 ;; Font Faces
 (set-face-attribute 'default nil
-                    ;;:family "Source Han Code JP"
-                    :family "Ricty Diminished"
-                    :height 210
+                    ;;:family "Source Code Pro" ;; no Japanese glyphs
+                    ;;:family "Source Han Code JP" ;; I dislike the proportion of Japanese glyphs to rest
+                    ;;:family "M+ 1MN" ;; Too thin
+                    :family "Ricty" ;; Mix Inconsolata and M+ Japanese glpyhs
+                    :height 210 ;; Size is mainly due to Retina display
                     :weight 'normal
                     :width 'normal)
 
