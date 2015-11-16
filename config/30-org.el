@@ -51,8 +51,7 @@
                         (org-agenda-log-mode 1)
                         (org-agenda-start-on-weekday nil)         ;; calendar begins today
                         (org-agenda-repeating-timestamp-show-all t)
-                        )
-                    )         
+                        (org-agenda-use-time-grid t)))       
             (alltodo ""
                      ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
                       (org-agenda-overriding-header "Unscheduled TODO entries:")
@@ -104,6 +103,12 @@
            "* TODO %^{Task}
 SCHEDULED: %^t
 %<%Y-%m-%d %H:%M>
+%?
+")
+          ("a" "Appointment" entry
+           (file+headline "~/Dropbox/org/calendar.org" "Inbox")
+           "* %^{Appointment}
+%^t
 %?
 ")
           ("T" "Quick task" entry
