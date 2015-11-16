@@ -5,30 +5,54 @@
 
 ;;; Code:
 
-;; Splash Screen to Org-mode
-(setq inhibit-splash-screen t
-      initial-scratch-message nil
-      initial-major-mode 'org-mode)
+
 
 ;; Font Faces
-(set-face-attribute 'default nil
-                    ;;:family "Source Code Pro" ;; no Japanese glyphs
-                    ;;:family "Source Han Code JP" ;; I dislike the proportion of Japanese glyphs to rest
-                    ;;:family "M+ 1MN" ;; Too thin
-                    :family "Ricty" ;; Mix Inconsolata and M+ Japanese glpyhs
-                    :height 210 ;; Size is mainly due to Retina display
-                    :weight 'normal
-                    :width 'normal)
+(if (display-graphic-p)
+    (progn
+      ;; Splash Screen to Org-mode
+      (setq inhibit-splash-screen t
+            initial-scratch-message nil
+            initial-major-mode 'org-mode)
+      
+      (set-face-attribute 'default nil
+                          ;;:family "Source Code Pro" ;; no Japanese glyphs
+                          ;;:family "Source Han Code JP" ;; I dislike the proportion of Japanese glyphs to rest
+                          ;;:family "M+ 1MN" ;; Too thin
+                          :family "Ricty" ;; Mix Inconsolata and M+ Japanese glpyhs
+                          :height 210 ;; Size is mainly due to Retina display
+                          :weight 'normal
+                          :width 'normal)
 
-(set-fontset-font (frame-parameter nil 'font)
-                  'japanese-jisx0208
-                  (cons "Ricty Diminished" "iso10646-1"))
-(set-fontset-font (frame-parameter nil 'font)
-                  'japanese-jisx0212
-                  (cons "Ricty Diminished" "iso10646-1"))
-(set-fontset-font (frame-parameter nil 'font)
-                  'katakana-jisx0201
-                  (cons "Ricty Diminished" "iso10646-1"))
+      (set-fontset-font (frame-parameter nil 'font)
+                        'japanese-jisx0208
+                        (cons "Ricty Diminished" "iso10646-1"))
+      (set-fontset-font (frame-parameter nil 'font)
+                        'japanese-jisx0212
+                        (cons "Ricty Diminished" "iso10646-1"))
+      (set-fontset-font (frame-parameter nil 'font)
+                        'katakana-jisx0201
+                        (cons "Ricty Diminished" "iso10646-1"))
+
+      ;; Custom themes
+      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+
+      ;; Theme
+      ;;(load-theme 'wombat t)
+      (load-theme 'dracula t)
+
+      (require 'color)
+      
+      (let ((bg (face-attribute 'default :background)))
+        (custom-set-faces
+         `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
+         `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
+         `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
+         `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+         `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+      )
+
+  )
 
 ;; Line Numbers
 (global-linum-mode t)
@@ -43,23 +67,6 @@
 ;; Show matching parentheses
 (setq show-paren-delay 0)
 (show-paren-mode 1)
-
-;; Custom themes
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-
-;; Theme
-;;(load-theme 'wombat t)
-(load-theme 'dracula t)
-
-(require 'color)
-  
-(let ((bg (face-attribute 'default :background)))
-  (custom-set-faces
-   `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
-   `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
-   `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
-   `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
-   `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
 
 (require 'use-package)
 

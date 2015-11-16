@@ -6,7 +6,11 @@
 ;;; Code:
 
 ;; Start server
-(server-start)
+(if (display-graphic-p)
+    (progn
+      (server-start)
+      )
+    )
 
 ;; OS X specific
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin:/Library/TeX/texbin"))
