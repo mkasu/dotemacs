@@ -134,6 +134,14 @@ SCHEDULED: %^t
              )
             )
           )
+    (setq org-icalendar-timezone "Europe/Berlin")
+    (setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due))
+    (setq org-icalendar-combined-agenda-file "~/Dropbox/org/agenda.ics")
+
+    ;; async export
+    (setq org-export-async-debug nil)
+    (setq org-export-in-background t)
+    
     ;; Org Projectile
     (use-package org-projectile
       :bind (("C-c n p" . org-projectile:project-todo-completing-read)
@@ -148,10 +156,10 @@ SCHEDULED: %^t
     )
   )
 
-(setq org-icalendar-timezone "Europe/Berlin")
-(setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due))
-(setq org-icalendar-combined-agenda-file "~/Dropbox/org/agenda.ics")
-
-;;(require 'calfw-org)
+(eval-after-load 'ox ;; shouldn't be byte compiled.
+  '(when (and user-init-file (buffer-file-name)) ;; don't do it in async
+     (setq org-export-async-init-file "~/.emacs.d/init.el")
+     )
+  )
 
 ;;; 30-org.el ends here
