@@ -153,6 +153,14 @@ SCHEDULED: %^t
       (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "p"))
       (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "l" "* TODO %? %a\n" "Linked Project TODO"))   
       )
+
+    (use-package calfw-org
+      :config
+      ;; 対象ファイル
+      (setq cfw:org-icalendars nil)
+      ;; First day of the week  0:Sunday, 1:Monday
+      (setq calendar-week-start-day 1))
+    
     )
   )
 
