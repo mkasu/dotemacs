@@ -6,3 +6,12 @@ irony/
 projectile-bookmarks.eld
 projectile.cache
 recentf
+
+# Emacs
+.emacs-buffers
+.org-id-locations
+ac-skk-alist.el
+eshell/
+lisp/
+/.emacs.desktop
+/.emacs.desktop.lock
