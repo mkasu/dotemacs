@@ -3,13 +3,13 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(c-basic-offset 4)
  '(custom-safe-themes
    (quote
     ("138d69908243e827e869330c43e7abc0f70f334dfa90a589e4d8a1f98a1e29af" default)))
  '(desktop-restore-frames t)
  '(indent-tabs-mode nil)
  '(magit-diff-use-overlays nil)
+ '(package-selected-packages (quote (use-package)))
  '(paradox-github-token t)
  '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40)))
  '(tab-width 4))
