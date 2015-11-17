@@ -7,6 +7,9 @@
 
 (require 'use-package)
 
+(setq c-default-style "stroustrup")
+(setq c-basic-offset 4)
+
 ;; == Highlight organizational keywords ==
 (add-hook 'c-mode-common-hook
                (lambda ()
