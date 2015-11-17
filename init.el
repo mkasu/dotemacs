@@ -45,6 +45,7 @@
 
 ;; === Documents ===
 (load-file "~/.emacs.d/config/30-org.el")
+(load-file "~/.emacs.d/config/31-latex.el")
 (load-file "~/.emacs.d/config/32-other.el")
 
 ;; === Programming ===
