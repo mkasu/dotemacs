@@ -170,4 +170,10 @@ SCHEDULED: %^t
      )
   )
 
+
+(defun my-add-current-timestamp()
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d %H:%M"))
+  )
+
 ;;; 30-org.el ends here
