@@ -41,6 +41,10 @@
     (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
     (setq TeX-view-program-list
           '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g -r %n %o %b")))
+    (setq-default TeX-auto-local "~/.auctex-auto")
+    (add-hook 'TeX-mode-hook 'auto-fill-mode)
+    (add-hook 'TeX-mode-hook
+          '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))
     )
   )
 
