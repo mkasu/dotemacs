@@ -1,0 +1,3 @@
+[submodule "scripts/org-toggl-py"]
+	path = scripts/org-toggl-py
+	url = https://github.com/mattduck/org-toggl-py

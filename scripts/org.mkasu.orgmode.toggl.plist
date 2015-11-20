@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>org.mkasu.orgmode.export</string>
+	<string>org.mkasu.orgmode.toggl</string>
 	<key>Program</key>
-	<string>/Users/mkastner/.emacs.d/scripts/org-export.sh</string>
+	<string>/Users/mkastner/.emacs.d/scripts/toggl.sh</string>
 	<key>StartInterval</key>
 	<integer>3600</integer>
 </dict>
