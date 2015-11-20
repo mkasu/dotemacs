@@ -77,6 +77,9 @@
              :publishing-directory "~/Dropbox/org/exports"
              :publishing-function org-latex-publish-to-pdf)
             ("all" :components ("html" "pdf"))))
+    (setq org-agenda-time-grid   '((daily today)
+                                   "--------------------"
+                                   (800 1000 1200 1400 1600 1800 2000 2200)))
     (setq org-latex-pdf-process
           '("latexmk -xelatex -shell-escape -interaction=nonstopmode -output-directory=%o %f"))
     (defun my-org-mode-hook()
