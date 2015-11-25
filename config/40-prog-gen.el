@@ -94,4 +94,13 @@ M-x compile.
   :bind ("C-c C-f" . helm-do-ag-project-root)
   )
 
+;; == swift mode ==
+(use-package swift-mode
+  :ensure t
+  :config
+  (add-to-list 'flycheck-checkers 'swift)
+  (defvar flycheck-swift-sdk-path)
+  (setq flycheck-swift-sdk-path "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk")
+  )
+
 ;;; 40-prog-gen.el ends here
