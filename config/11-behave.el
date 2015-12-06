@@ -32,7 +32,7 @@
 (global-hl-line-mode 1)
 
 ;; Session management
-(desktop-save-mode 1)
+;(desktop-save-mode 1)
 
 ;; Backup behaviour
 (auto-save-mode 1)

@@ -95,12 +95,12 @@ M-x compile.
   )
 
 ;; == swift mode ==
-(use-package swift-mode
-  :ensure t
-  :config
-  (add-to-list 'flycheck-checkers 'swift)
-  (defvar flycheck-swift-sdk-path)
-  (setq flycheck-swift-sdk-path "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk")
-  )
+;(use-package swift-mode
+;  :ensure t
+;  :config
+;  (add-to-list 'flycheck-checkers 'swift)
+;  (defvar flycheck-swift-sdk-path)
+;  (setq flycheck-swift-sdk-path "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk")
+;  )
 
 ;;; 40-prog-gen.el ends here
