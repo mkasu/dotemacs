@@ -94,6 +94,16 @@ M-x compile.
   :bind ("C-c C-f" . helm-do-ag-project-root)
   )
 
+;; == glsl ==
+(use-package glsl-mode
+  :ensure t
+  :if (eq system-type 'darwin)
+  :init
+  (append auto-mode-alist '('("\\.glsl\\'" . glsl-mode)
+                            '("\\.vert\\'" . glsl-mode)
+                            '("\\.frag\\'" . glsl-mode)
+                            '("\\.geom\\'" . glsl-mode))))
+
 ;; == swift mode ==
 ;(use-package swift-mode
 ;  :ensure t

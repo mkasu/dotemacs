@@ -38,8 +38,8 @@
       (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 
       ;; Theme
-      ;;(load-theme 'wombat t)
-      (load-theme 'dracula t)
+      (load-theme 'wombat t)
+      ;;(load-theme 'dracula t)
 
       (require 'color)
       

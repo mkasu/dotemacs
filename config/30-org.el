@@ -1,4 +1,3 @@
-
 ;;; 30-org.el --- Org Mode
 
 ;;; Commentary:
@@ -199,6 +198,8 @@ SCHEDULED: %^t
 
   (use-package org-depend
     )
+
+  (use-package org-mac-link)
   
   )
 

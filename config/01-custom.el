@@ -9,7 +9,7 @@
  '(desktop-restore-frames t)
  '(indent-tabs-mode nil)
  '(magit-diff-use-overlays nil)
- '(package-selected-packages (quote (use-package)))
+ '(package-selected-packages (quote (glsl-mode use-package)))
  '(paradox-github-token t)
  '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40)))
  '(tab-width 4))
