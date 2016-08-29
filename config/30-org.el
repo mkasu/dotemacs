@@ -223,7 +223,7 @@ SCHEDULED: %^t
     (when agenda-window
       (with-selected-window agenda-window (org-agenda-redo)))))
 
-(run-at-time nil 60 'kiwon/org-agenda-redo-in-other-window)
+;;(run-at-time nil 60 'kiwon/org-agenda-redo-in-other-window)
 
 ;; I don't want to be warned about discarding undo info.
 (unless (boundp 'warning-suppress-types)

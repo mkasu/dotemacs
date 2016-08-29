@@ -19,27 +19,28 @@
                           ;;:family "Source Code Pro" ;; no Japanese glyphs
                           ;;:family "Source Han Code JP" ;; I dislike the proportion of Japanese glyphs to rest
                           ;;:family "M+ 1MN" ;; Too thin
-                          :family "Ricty" ;; Mix Inconsolata and M+ Japanese glpyhs
-                          :height 210 ;; Size is mainly due to Retina display
+                          ;; :family "Ricty" ;; Mix Inconsolata and M+ Japanese glpyhs
+                          :family "Source Code Pro"
+                          :height 110 ;; Size is mainly due to Retina display
                           :weight 'normal
                           :width 'normal)
 
-      (set-fontset-font (frame-parameter nil 'font)
-                        'japanese-jisx0208
-                        (cons "Ricty Diminished" "iso10646-1"))
-      (set-fontset-font (frame-parameter nil 'font)
-                        'japanese-jisx0212
-                        (cons "Ricty Diminished" "iso10646-1"))
-      (set-fontset-font (frame-parameter nil 'font)
-                        'katakana-jisx0201
-                        (cons "Ricty Diminished" "iso10646-1"))
+      ;; (set-fontset-font (frame-parameter nil 'font)
+      ;;                   'japanese-jisx0208
+      ;;                   (cons "Ricty Diminished" "iso10646-1"))
+      ;; (set-fontset-font (frame-parameter nil 'font)
+      ;;                   'japanese-jisx0212
+      ;;                   (cons "Ricty Diminished" "iso10646-1"))
+      ;; (set-fontset-font (frame-parameter nil 'font)
+      ;;                   'katakana-jisx0201
+      ;;                   (cons "Ricty Diminished" "iso10646-1"))
 
       ;; Custom themes
       (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 
       ;; Theme
-      (load-theme 'wombat t)
-      ;;(load-theme 'dracula t)
+      ;;(load-theme 'wombat t)
+      (load-theme 'dracula t)
 
       (require 'color)
       

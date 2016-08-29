@@ -36,12 +36,14 @@
 (require 'diminish)
 (require 'bind-key)
 
+(setq package-check-signature nil)
+
 ;; === Basics ===
 (load-file "~/.emacs.d/config/10-look.el")
 (load-file "~/.emacs.d/config/11-behave.el")
 (load-file "~/.emacs.d/config/12-utf8.el")
-;;(load-file "~/.emacs.d/config/13-jp.el")
-(load-file "~/.emacs.d/config/19-mail.el")
+(load-file "~/.emacs.d/config/13-jp.el")
+;;(load-file "~/.emacs.d/config/19-mail.el")
 
 ;; === Documents ===
 (load-file "~/.emacs.d/config/30-org.el")

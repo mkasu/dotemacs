@@ -19,6 +19,9 @@
 
 (setq ns-right-alternate-modifier nil)
 
+;; Short yes-or-no
+ (defalias 'yes-or-no-p 'y-or-n-p)
+
 ;; Easy switching between windows
 (windmove-default-keybindings 'super)
 
@@ -110,9 +113,17 @@
 ;;; === Packages ===
 
 (use-package helm
-  :ensure t
-  :config (helm-mode 1)
-  )
+          :diminish helm-mode
+          :ensure t
+          :init
+          (progn
+            (require 'helm-config)
+            (helm-mode)
+            )
+          :bind (
+            ("M-x" . helm-M-x)
+            )
+          )
 
 (use-package undo-tree
   :diminish undo-tree-mode
@@ -125,9 +136,9 @@
     )
   )
 
-(use-package which-key
-  :config (which-key-mode)
-  )
+;; (use-package which-key
+;;   :config (which-key-mode)
+;;   )
 
 
 (use-package desktop+

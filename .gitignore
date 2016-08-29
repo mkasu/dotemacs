@@ -15,3 +15,10 @@ eshell/
 lisp/
 /.emacs.desktop
 /.emacs.desktop.lock
+
+# Misc
+auto-save-list/
+backups/
+session.*
+.\#*
+\#*
