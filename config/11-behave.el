@@ -20,7 +20,10 @@
 (setq ns-right-alternate-modifier nil)
 
 ;; Short yes-or-no
- (defalias 'yes-or-no-p 'y-or-n-p)
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; Remove menu bar for maximum screen space
+(menu-bar-mode -1)
 
 ;; Easy switching between windows
 (windmove-default-keybindings 'super)
