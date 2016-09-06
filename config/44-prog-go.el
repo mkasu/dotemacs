@@ -56,8 +56,6 @@
   (progn
     (add-to-list 'company-backends 'company-go)
     (add-hook 'go-mode-hook 'company-mode)
-    (add-hook 'go-mode-hook (lambda ()
-                              (Local-set-key (kbd \"M-.\") 'godef-jump)))
     ))
 
 (use-package go-eldoc
