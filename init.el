@@ -56,5 +56,6 @@
 (load-file "~/.emacs.d/config/41-prog-cpp.el")
 (load-file "~/.emacs.d/config/42-prog-python.el")
 (load-file "~/.emacs.d/config/43-prog-ruby.el")
+(load-file "~/.emacs.d/config/44-prog-go.el")
 
 ;;; init.el ends here
