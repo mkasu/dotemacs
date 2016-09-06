@@ -13,7 +13,8 @@
  '(paradox-github-token t)
  '(safe-local-variable-values (quote ((TeX-master . t))))
  '(tab-stop-list (quote (4 8 12 16 20 24 28 32 36 40)))
- '(tab-width 4))
+ '(tab-width 4)
+ '(winner-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
