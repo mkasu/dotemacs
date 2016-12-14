@@ -14,10 +14,16 @@
 
 (setq warning-minimum-level :emergency)
 
+;;(global-set-key (kbd "s-SPC") 'fixup-whitespace)
+
 ;; OS X specific
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin:/Library/TeX/texbin"))
-(setq exec-path (append exec-path '("/usr/local/bin")))
-(setq exec-path (append exec-path '("/Library/TeX/texbin")))
+;;(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin:/Library/TeX/texbin"))
+;;(setq exec-path (append exec-path '("/usr/local/bin")))
+;;(setq exec-path (append exec-path '("/Library/TeX/texbin")))
+
+;; PyEnv
+(setenv "PATH" (concat "~/.pyenv/shims:~/.pyenv/bin:" (getenv "PATH")))
+(setq exec-path (cons "~/.pyenv/shims" exec-path))
 
 (setq ns-right-alternate-modifier nil)
 
@@ -67,7 +73,7 @@
 (setq indent-line-function 'insert-tab)
 
 ;; Terminal
-;; (defun popwin-term:ansi-term () 
+;; (defun popwin-term:ansi-term ()
 ;;   (interactive)
 ;;   (popwin:display-buffer-1
 ;;   (or (get-buffer "*ansi-term*")
@@ -76,7 +82,6 @@
 ;;       (ansi-term "/usr/local/bin/zsh")))
 ;;   :default-config-keywords '(:position :bottom :height 20 :stick t)))
 ;; (global-set-key (kbd "C-x t") 'popwin-term:ansi-term)
-
 
 
 ;; Special window in bottom
@@ -114,7 +119,7 @@
       (eshell-send-input)
       (end-of-buffer))))
 (global-set-key (kbd "C-c t") 'eshell-pop)
-    
+
 ;;; === Packages ===
 
 (use-package helm
@@ -145,8 +150,20 @@
 ;;   :config (which-key-mode)
 ;;   )
 
+(use-package paradox
+  :ensure t
+  :config
+  (setq paradox-execute-asynchronously nil
+        paradox-github-token t)
+  )
 
 (use-package desktop+
   :ensure t)
+
+(use-package winner
+  :init
+  (winner-mode))
+
+(show-paren-mode t)
 
 ;;; 11-behave.el ends here

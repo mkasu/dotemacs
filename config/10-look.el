@@ -14,14 +14,14 @@
       (setq inhibit-splash-screen t
             initial-scratch-message nil
             initial-major-mode 'org-mode)
-      
+
       (set-face-attribute 'default nil
                           ;;:family "Source Code Pro" ;; no Japanese glyphs
                           ;;:family "Source Han Code JP" ;; I dislike the proportion of Japanese glyphs to rest
                           ;;:family "M+ 1MN" ;; Too thin
-                          ;; :family "Ricty" ;; Mix Inconsolata and M+ Japanese glpyhs
-                          :family "Source Code Pro"
-                          :height 110 ;; Size is mainly due to Retina display
+                          :family "Ricty:antialias=none" ;; Mix Inconsolata and M+ Japanese glpyhs
+                          ;;:family "Source Code Pro"
+                          :height 123 ;; Size is mainly due to Retina display
                           :weight 'normal
                           :width 'normal)
 
@@ -40,10 +40,14 @@
 
       ;; Theme
       ;;(load-theme 'wombat t)
-      (load-theme 'dracula t)
+      ;;(load-theme 'dracula t)
+      ;;(load-theme 'sanityinc-tomorrow-eighties t)
+
+      ;;(moe-theme-set-color 'cyan)
+      ;;(moe-dark)
 
       (require 'color)
-      
+
       (let ((bg (face-attribute 'default :background)))
         (custom-set-faces
          `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
@@ -74,6 +78,18 @@
 (use-package powerline
   :ensure t
   :init (powerline-default-theme)
+  )
+
+(use-package moe-theme                     ; Theme
+  :ensure t
+  :config
+  (progn
+	(powerline-moe-theme)
+	(setq show-paren-style 'expression)
+    (setq moe-theme-highlight-buffer-id t)
+    (moe-dark)
+    (moe-theme-set-color 'cyan)
+    )
   )
 
 (use-package spaceline

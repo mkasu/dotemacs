@@ -48,7 +48,7 @@
 
   (set-language-environment "Japanese")
   (setq default-input-method "japanese-mozc")
-  
+
   (global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method)
 
   (add-hook 'mozc-mode-hook
@@ -58,4 +58,4 @@
 
 
 
-;;; 13-jp.el ends here 
+;;; 13-jp.el ends here

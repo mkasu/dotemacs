@@ -8,7 +8,8 @@
 
 (require 'use-package)
 
-
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "vivaldi-stable")
 
 (use-package org
   :ensure t
@@ -18,11 +19,12 @@
     (add-hook 'org-mode-hook 'visual-line-mode)
     (add-hook 'org-mode-hook 'org-indent-mode)
     (add-hook 'org-mode-hook 'flyspell-mode)
+	(setq org-image-actual-width nil)
     (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
       (add-hook hook (lambda () (flycheck-mode -1))))
     ;; Agenda
     (setq org-agenda-window-setup 'current-window)
-    
+
     (setq org-agenda-overriding-columns-format "%CATEGORY %50ITEM %SCHEDULED %DEADLINE")
     (setq org-agenda-custom-commands
           '(("H" "Detailed view"
@@ -31,7 +33,7 @@
                           (org-agenda-start-on-weekday nil)         ;; calendar begins today
                           (org-agenda-repeating-timestamp-show-all t)
                           )
-                      )         
+                      )
               (alltodo ""
                        ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
                         (org-agenda-overriding-header "Unscheduled TODO entries:")
@@ -53,7 +55,7 @@
                           (org-agenda-start-on-weekday nil)         ;; calendar begins today
                           (org-agenda-repeating-timestamp-show-all t)
                           (org-agenda-use-time-grid t))
-                      )       
+                      )
               (alltodo ""
                        ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
                         (org-agenda-overriding-header "Unscheduled TODO entries:")
@@ -149,7 +151,7 @@ SCHEDULED: %^t
     ;; async export
     (setq org-export-async-debug nil)
     (setq org-export-in-background t)
-    
+
     ;; Org Projectile
     (use-package org-projectile
       :bind (("C-c n p" . org-projectile:project-todo-completing-read)
@@ -159,16 +161,16 @@ SCHEDULED: %^t
       :config
       (setq org-projectile:projects-file "~/Dropbox/org/projects.org")
       (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "p"))
-      (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "l" "* TODO %? %a\n" "Linked Project TODO"))   
+      (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "l" "* TODO %? %a\n" "Linked Project TODO"))
       )
 
-    (use-package calfw-org
-      :config
-      ;; 対象ファイル
-      (setq cfw:org-icalendars nil)
-      ;; First day of the week  0:Sunday, 1:Monday
-      (setq calendar-week-start-day 1))
-    
+    ;;(use-package calfw-org
+    ;;  :config
+    ;;  ;; 対象ファイル
+    ;;  (setq cfw:org-icalendars nil)
+    ;;  ;; First day of the week  0:Sunday, 1:Monday
+    ;;  (setq calendar-week-start-day 1))
+
     )
 
   (org-babel-do-load-languages
@@ -176,7 +178,7 @@ SCHEDULED: %^t
    '((emacs-lisp . t)
      (gnuplot . t)
      (latex . t)
-     (ledger . t) 
+     (ledger . t)
      (ocaml . nil)
      (python . t)
      (ruby . t)
@@ -184,7 +186,7 @@ SCHEDULED: %^t
      (sh . t)
      (sql . nil)
      (sqlite . t)))
-  
+
   (setq org-confirm-babel-evaluate nil)
 
   (defun org-babel-remove-result-buffer ()
@@ -196,11 +198,8 @@ SCHEDULED: %^t
       (org-babel-remove-result))))
   (global-set-key (kbd "C-c C-v C-k") 'org-babel-remove-result-buffer)
 
-  (use-package org-depend
-    )
-
-  (use-package org-mac-link)
-  
+;;  (use-package org-depend)
+;;  (use-package org-mac-link)
   )
 
 (eval-after-load 'ox ;; shouldn't be byte compiled.
@@ -257,5 +256,14 @@ SCHEDULED: %^t
     (org-mode)
     (message "Exporting to JSON: %s" (car command-line-args-left))
     (org-export-json)))
+
+(add-hook 'org-mode-hook
+      '(lambda ()
+             (setq org-file-apps
+                   (append '(
+                             ("\\.png\\'" . "gwenview %s")
+                             ("\\.jpg\\'" . "gwenview %s")
+                             ("\\.pdf\\'" . "okular %s")
+                             ) org-file-apps ))))
 
 ;;; 30-org.el ends here

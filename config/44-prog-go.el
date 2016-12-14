@@ -63,4 +63,6 @@
   :commands go-eldoc-setup
   :init (add-hook 'go-mode-hook 'go-eldoc-setup))
 
+
+
 ;;; 42-prog-go.el ends here

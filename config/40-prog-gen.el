@@ -22,6 +22,23 @@ M-x compile.
        (revert-buffer t t))
    (call-interactively 'compile)))
 
+;; == highlight TODO/FIXME etc. ==
+(setq hl-todo-keyword-faces
+  '(("HOLD" . "#d0bf8f")
+    ("TODO" . "#cc9393")
+    ("NEXT" . "#dca3a3")
+    ("THEM" . "#dc8cc3")
+    ("PROG" . "#7cb8bb")
+    ("OKAY" . "#7cb8bb")
+    ("DONT" . "#5f7f5f")
+    ("FAIL" . "#8c5353")
+    ("DONE" . "#afd8af")
+    ("FIXME" . "#cc9393")
+    ("XXX"   . "#cc9393")
+    ("XXXX"  . "#cc9393")
+    ("???"   . "#cc9393")))
+(global-hl-todo-mode 1)
+
 ;; == yasnippet ==
 (use-package yasnippet
   :ensure t
@@ -58,7 +75,7 @@ M-x compile.
     :ensure t
     :bind (("C-x C-g" . helm-mini)
            ("C-x C-f" . helm-find-files))
-    :init 
+    :init
     (helm-projectile-on)
     )
   )
@@ -75,6 +92,9 @@ M-x compile.
   :ensure t
   :defer t
   :bind ("C-x g" . magit-status)
+  :config(
+          (magit-diff-use-overlays nil)
+          )
   )
 
 ;; == flycheck ==
