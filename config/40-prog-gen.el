@@ -62,6 +62,10 @@ M-x compile.
 	company-dabbrev-downcase        nil
 	company-backends                '((company-irony))
 	)
+  (use-package company-statistics
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'company-statistics-mode))
   :bind ("C-;" . company-complete-common)
   )
 

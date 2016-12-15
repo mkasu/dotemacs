@@ -77,14 +77,14 @@
     (setq org-support-shift-select t)
     (setq org-publish-project-alist
           '(("html"
-             :base-directory "~/Dropbox/org/"
+             :base-directory "~/Seafile/org/"
              :base-extension "org"
-             :publishing-directory "~/Dropbox/org/exports"
+             :publishing-directory "~/Seafile/org/exports"
              :publishing-function org-html-publish-to-html)
             ("pdf"
-             :base-directory "~/Dropbox/org/"
+             :base-directory "~/Seafile/org/"
              :base-extension "org"
-             :publishing-directory "~/Dropbox/org/exports"
+             :publishing-directory "~/Seafile/org/exports"
              :publishing-function org-latex-publish-to-pdf)
             ("all" :components ("html" "pdf"))))
     (setq org-agenda-time-grid   '((daily today)
@@ -109,24 +109,24 @@
     (setq org-capture-templates
           '(
             ("t" "Tasks" entry
-             (file+headline "~/Dropbox/org/todo.org" "Inbox")
+             (file+headline "~/Seafile/org/todo.org" "Inbox")
              "* TODO %^{Task}
 SCHEDULED: %^t
 %<%Y-%m-%d %H:%M>
 %?
 ")
             ("a" "Appointment" entry
-             (file+headline "~/Dropbox/org/calendar.org" "Inbox")
+             (file+headline "~/Seafile/org/calendar.org" "Inbox")
              "* %^{Appointment}
 %^t
 %?
 ")
             ("T" "Quick task" entry
-             (file+headline "~/Dropbox/org/todo.org" "Inbox")
+             (file+headline "~/Seafile/org/todo.org" "Inbox")
              "* TODO %^{Task}"
              :immediate-finish t)
             ("B" "Book" entry
-             (file+headline "~/Dropbox/org/books.org" "Inbox")
+             (file+headline "~/Seafile/org/books.org" "Inbox")
              "* %^{Title}  %^g
 %i
 *Author(s):* %^{Author}
@@ -136,7 +136,7 @@ SCHEDULED: %^t
 %U"
              )
             ("e" "Email Task" entry
-             (file+headline "~/Dropbox/org/todo.org" "Email")
+             (file+headline "~/Seafile/org/todo.org" "Email")
              "* TODO %^{Title}
 %a
 %?
@@ -146,7 +146,7 @@ SCHEDULED: %^t
           )
     (setq org-icalendar-timezone "Europe/Berlin")
     (setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due))
-    (setq org-icalendar-combined-agenda-file "~/Dropbox/org/agenda.ics")
+    (setq org-icalendar-combined-agenda-file "~/Seafile/org/agenda.ics")
 
     ;; async export
     (setq org-export-async-debug nil)
@@ -159,7 +159,7 @@ SCHEDULED: %^t
       :ensure t
       :demand t
       :config
-      (setq org-projectile:projects-file "~/Dropbox/org/projects.org")
+      (setq org-projectile:projects-file "~/Seafile/org/projects.org")
       (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "p"))
       (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "l" "* TODO %? %a\n" "Linked Project TODO"))
       )
@@ -264,6 +264,9 @@ SCHEDULED: %^t
                              ("\\.png\\'" . "gwenview %s")
                              ("\\.jpg\\'" . "gwenview %s")
                              ("\\.pdf\\'" . "okular %s")
+                             ("\\.docx\\'" . "lowriter %s")
+                             ("\\.ppt\\'" . "loimpress %s")
+                             ("\\.xls\\'" . "localc %s")
                              ) org-file-apps ))))
 
 ;;; 30-org.el ends here

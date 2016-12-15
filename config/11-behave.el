@@ -160,6 +160,16 @@
 (use-package desktop+
   :ensure t)
 
+
+(use-package deft
+  :ensure t
+  :bind ("<f8>" . deft)
+  :config
+  (setq deft-extensions '("org")
+        deft-default-extension "org"
+		deft-directory "~/Seafile/org")
+  )
+
 (use-package winner
   :init
   (winner-mode))
