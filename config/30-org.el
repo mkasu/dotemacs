@@ -14,6 +14,7 @@
 (use-package org
   :ensure t
   :bind ("C-c a" . org-agenda)
+  :bind ("C-c b" . org-time-stamp-inactive)
   :init
   (progn
     (add-hook 'org-mode-hook 'visual-line-mode)

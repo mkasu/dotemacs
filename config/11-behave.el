@@ -33,8 +33,6 @@
 ;; Remove menu bar for maximum screen space
 (menu-bar-mode -1)
 
-;; Easy switching between windows
-(windmove-default-keybindings 'super)
 
 ;; Electric Pair mode
 (electric-pair-mode 1)
@@ -86,6 +84,18 @@
 
 ;; Special window in bottom
 (require 'use-package)
+
+
+(use-package framemove
+    :ensure t
+    :config
+    (progn
+      (setq framemove-hook-into-windmove t)
+    )
+)
+
+;; Easy switching between windows
+(windmove-default-keybindings 'super)
 
 (use-package popwin
   :ensure t
@@ -163,12 +173,45 @@
 
 (use-package deft
   :ensure t
-  :bind ("<f8>" . deft)
+  :bind ("C-c d" . deft)
   :config
   (setq deft-extensions '("org")
         deft-default-extension "org"
-		deft-directory "~/Seafile/org")
+		deft-directory "~/Seafile/org"
+		;;deft-text-mode 'org-mode
+		deft-use-filename-as-title t
+		deft-use-filter-string-for-filename t)
   )
+
+;;advise deft-new-file-named to replace spaces in file names with -
+(defun bjm-deft-strip-spaces (args)
+  "Replace spaces with - in the string contained in the first element of the list args. Used to advise deft's file naming function."
+  (list (replace-regexp-in-string " " "-" (car args)))
+  )
+(advice-add 'deft-new-file-named :filter-args #'bjm-deft-strip-spaces)
+
+;;advise deft to save window config
+(defun bjm-deft-save-windows (orig-fun &rest args)
+  (setq bjm-pre-deft-window-config (current-window-configuration))
+  (apply orig-fun args)
+  )
+
+(advice-add 'deft :around #'bjm-deft-save-windows)
+
+;;function to quit a deft edit cleanly back to pre deft window
+(defun bjm-quit-deft ()
+  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
+  (interactive)
+  (save-buffer)
+  (kill-this-buffer)
+  (switch-to-buffer "*Deft*")
+  (kill-this-buffer)
+  (when (window-configuration-p bjm-pre-deft-window-config)
+    (set-window-configuration bjm-pre-deft-window-config)
+    )
+  )
+
+(global-set-key (kbd "C-c q") 'bjm-quit-deft)
 
 (use-package winner
   :init
