@@ -1,0 +1,1305 @@
+#+TITLE: Emacs config
+#+AUTHOR: Marc Aurel Kastner
+#+EMAIL: kastnerm@murase.m.is.nagoya-u.ac.jp
+#+STARTUP: showeverything
+
+* Base stuff
+
+** Initial
+
+#+BEGIN_SRC emacs-lisp
+(eval-when-compile
+  (require 'use-package))
+
+(require 'diminish)
+
+(require 'bind-key)
+#+END_SRC
+
+
+** Look
+
+*** Font faces
+
+
+#+BEGIN_SRC emacs-lisp
+(if (display-graphic-p)
+    (progn
+      ;; Splash Screen to Org-mode
+      (setq inhibit-splash-screen t
+            initial-scratch-message nil
+            initial-major-mode 'org-mode)
+
+      (set-face-attribute 'default nil
+                          ;;:family "Source Code Pro" ;; no Japanese glyphs
+                          ;;:family "Source Han Code JP" ;; I dislike the proportion of Japanese glyphs to rest
+                          ;;:family "M+ 1MN" ;; Too thin
+                          :family "Ricty:antialias=none" ;; Mix Inconsolata and M+ Japanese glpyhs
+                          ;;:family "Source Code Pro"
+                          :height 123 ;; Size is mainly due to Retina display
+                          :weight 'normal
+                          :width 'normal)
+
+      ;; (set-fontset-font (frame-parameter nil 'font)
+      ;;                   'japanese-jisx0208
+      ;;                   (cons "Ricty Diminished" "iso10646-1"))
+      ;; (set-fontset-font (frame-parameter nil 'font)
+      ;;                   'japanese-jisx0212
+      ;;                   (cons "Ricty Diminished" "iso10646-1"))
+      ;; (set-fontset-font (frame-parameter nil 'font)
+      ;;                   'katakana-jisx0201
+      ;;                   (cons "Ricty Diminished" "iso10646-1"))
+
+      ;; Custom themes
+      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+
+      ;; Theme
+      ;;(load-theme 'wombat t)
+      ;;(load-theme 'dracula t)
+      ;;(load-theme 'sanityinc-tomorrow-eighties t)
+
+      ;;(moe-theme-set-color 'cyan)
+      ;;(moe-dark)
+
+      (require 'color)
+
+      (let ((bg (face-attribute 'default :background)))
+        (custom-set-faces
+         `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
+         `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
+         `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
+         `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+         `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+      )
+
+  )
+
+#+END_SRC
+
+
+*** Theme
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package moe-theme                     ; Theme
+  :ensure t
+  :config
+  (progn
+	(powerline-moe-theme)
+	(setq show-paren-style 'expression)
+    (setq moe-theme-highlight-buffer-id t)
+    (moe-dark)
+    (moe-theme-set-color 'cyan)
+    )
+  )
+#+END_SRC
+
+
+*** Spaceline
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package powerline
+  :ensure t
+  :init (powerline-default-theme)
+  )
+
+(use-package spaceline
+  :ensure t
+  :init
+  (progn
+    (require 'spaceline-config)
+    (setq powerline-default-separator 'wave)
+    (spaceline-spacemacs-theme)))
+#+END_SRC
+
+
+*** Miscellaneous
+
+
+#+BEGIN_SRC emacs-lisp
+
+;; Line Numbers
+(global-linum-mode t)
+
+;; No toolbar
+(tool-bar-mode -1)
+
+;; No bell
+(setq visible-bell nil) ;; The default
+(setq ring-bell-function 'ignore)
+
+;; Show matching parentheses
+(setq show-paren-delay 0)
+(show-paren-mode 1)
+
+(setq warning-minimum-level :emergency)
+
+#+END_SRC
+
+
+** Behave
+
+*** Server
+
+
+#+BEGIN_SRC emacs-lisp
+;; Start server
+(if (display-graphic-p)
+    (progn
+      (server-start)
+      )
+    )
+#+END_SRC
+
+
+*** Backups
+
+
+#+BEGIN_SRC emacs-lisp
+(defvar --backup-directory (concat user-emacs-directory "backups"))
+(if (not (file-exists-p --backup-directory))
+        (make-directory --backup-directory t))
+(setq backup-directory-alist `(("." . ,--backup-directory)))
+
+(setq backup-by-copying t)
+(setq delete-old-versions t
+  kept-new-versions 9
+  kept-old-versions 6
+  version-control t)
+#+END_SRC
+
+
+*** Terminal
+
+
+#+BEGIN_SRC emacs-lisp
+
+;; Terminal
+;; (defun popwin-term:ansi-term ()
+;;   (interactive)
+;;   (popwin:display-buffer-1
+;;   (or (get-buffer "*ansi-term*")
+;;       (save-window-excursion
+;;       (interactive)
+;;       (ansi-term "/usr/local/bin/zsh")))
+;;   :default-config-keywords '(:position :bottom :height 20 :stick t)))
+;; (global-set-key (kbd "C-x t") 'popwin-term:ansi-term)
+#+END_SRC
+
+
+*** Tabs vs. Space
+
+
+#+BEGIN_SRC emacs-lisp
+;; 4 spaces for tab
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+(setq indent-line-function 'insert-tab)
+#+END_SRC
+
+
+*** Window movement
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package framemove
+    :ensure t
+    :config
+    (progn
+      (setq framemove-hook-into-windmove t)
+    )
+)
+
+
+(windmove-default-keybindings 'super)
+#+END_SRC
+
+
+*** Popwin
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package popwin
+  :ensure t
+  :config
+  (progn
+    (popwin-mode 1)
+    (push '(flycheck-error-list-mode :stick t) popwin:special-display-config)
+    (push '("^\*helm.+\*$" :regexp t) popwin:special-display-config)
+    (push '("\\*ansi-term.*\\*" :regexp t) popwin:special-display-config)
+    (add-hook 'helm-after-initialize-hook (lambda ()
+                                          (popwin:display-buffer helm-buffer t)
+                                          (popwin-mode -1)))
+    (add-hook 'helm-cleanup-hook (lambda () (popwin-mode 1)))
+    (push '("*eshell*" :height 0.5) popwin:special-display-config)
+    )
+  )
+
+(defun eshell-pop (universal-argument)
+  "open eshell window using popwin-elf"
+  (interactive "P")
+  (let* ((eshell-buffer-name "*eshell*")
+         (eshell-buffer (get-buffer eshell-buffer-name))
+         (file-name (buffer-file-name (current-buffer)))
+         (current-directory (with-current-buffer (current-buffer) default-directory)))
+    (if eshell-buffer
+        (popwin:display-buffer eshell-buffer)
+      (eshell))
+    (when (and universal-argument file-name)
+      (eshell-kill-input)
+      (insert (concat "cd " current-directory))
+      (eshell-send-input)
+      (end-of-buffer))))
+(global-set-key (kbd "C-c t") 'eshell-pop)
+#+END_SRC
+
+
+*** Helm
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm
+          :diminish helm-mode
+          :ensure t
+          :init
+          (progn
+            (require 'helm-config)
+            (helm-mode)
+            )
+          :bind (
+            ("M-x" . helm-M-x)
+            )
+          )
+
+;; == ag ==
+
+(use-package helm-ag
+  :ensure t
+  :bind ("C-c C-f" . helm-do-ag-project-root)
+  )
+
+#+END_SRC
+
+
+*** Undo Tree
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :init (global-undo-tree-mode)
+  :ensure t
+  :config
+  (progn
+    (global-set-key (kbd "C-S-z") 'undo-tree-redo)
+    (global-set-key (kbd "C-z") 'undo)
+    )
+  )
+#+END_SRC
+
+
+*** Paradox
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package paradox
+  :ensure t
+  :config
+  (setq paradox-execute-asynchronously nil
+        paradox-github-token t)
+  )
+#+END_SRC
+
+
+*** Desktop + 
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package desktop+
+  :ensure t)
+#+END_SRC
+
+*** Winner
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package winner
+  :init
+  (winner-mode))
+#+END_SRC
+
+
+*** UTF-8 support
+
+
+#+BEGIN_SRC emacs-lisp
+(prefer-coding-system                   'utf-8)
+(set-language-environment               'utf-8)
+(set-default-coding-systems             'utf-8)
+(setq file-name-coding-system           'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+(setq coding-system-for-write           'utf-8)
+(set-keyboard-coding-system             'utf-8)
+(set-terminal-coding-system             'utf-8)
+(set-clipboard-coding-system            'utf-8)
+(set-selection-coding-system            'utf-8)
+(setq default-process-coding-system     '(utf-8 . utf-8))
+(add-to-list 'auto-coding-alist         '("." . utf-8))
+#+END_SRC
+
+
+*** Japanese support
+
+**** Migemo
+
+
+#+BEGIN_SRC emacs-lisp
+;; ローマ字で日本語の検索
+(use-package migemo
+  :ensure t
+  :demand t
+  :config
+  (setq migemo-user-dictionary nil)
+  (setq migemo-regex-dictionary nil)
+  (setq migemo-coding-system 'utf-8-unix)
+
+  (setq migemo-command "cmigemo")
+  (setq migemo-options '("-q" "--emacs"))
+  (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
+  (migemo-init))
+#+END_SRC
+
+
+**** Mozc
+
+
+#+BEGIN_SRC emacs-lisp
+;; 日本語入力
+(defconst my-lisp-dir (cond
+                       ((equal system-type 'gnu/linux) "/usr/share/emacs/site-lisp/")
+                       ((equal system-type 'darwin) (concat "/usr/local/Cellar/emacs/" (number-to-string emacs-major-version) "." (number-to-string emacs-minor-version) "/share/emacs/site-lisp/"))
+                       (t (concat "/usr/share/emacs24/site-lisp/"))))
+
+(add-to-list 'load-path (concat my-lisp-dir "emacs-mozc"))
+
+(use-package mozc
+  :config
+  (require 'mozc)
+
+  (set-language-environment "Japanese")
+  (setq default-input-method "japanese-mozc")
+
+  (global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method)
+
+  (add-hook 'mozc-mode-hook
+   (lambda()
+     (define-key mozc-mode-map (kbd "<zenkaku-hankaku>") 'toggle-input-method)))
+  )
+#+END_SRC
+
+
+*** Miscellaneous
+
+
+#+BEGIN_SRC emacs-lisp
+
+(show-paren-mode t)
+
+;; Read from hard-disk
+;; Especially useful when syncing between different computers (Dropbox)
+;; Or using other editors than emacs simultaneously (why would anyone not use Emacs)
+(global-auto-revert-mode 1)
+
+
+;; Short yes-or-no
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(setq ns-right-alternate-modifier nil)
+
+;; Remove menu bar for maximum screen space
+(menu-bar-mode -1)
+
+;; Electric Pair mode
+(electric-pair-mode 1)
+
+;; Delete Selection mode
+(delete-selection-mode 1)
+
+;; Highlight line
+(global-hl-line-mode 1)
+
+;; Session management
+;(desktop-save-mode 1)
+
+;; Backup behaviour
+(auto-save-mode 1)
+
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "vivaldi-stable")
+
+#+END_SRC
+
+
+* Documents-related
+
+** Org mode
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package org
+  :ensure t
+  :bind ("C-c a" . org-agenda)
+  :bind ("C-c b" . org-time-stamp-inactive)
+  :init
+  (progn
+    (add-hook 'org-mode-hook 'visual-line-mode)
+    (add-hook 'org-mode-hook 'org-indent-mode)
+    (add-hook 'org-mode-hook 'flyspell-mode)
+	(setq org-image-actual-width nil)
+    (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+      (add-hook hook (lambda () (flycheck-mode -1))))
+    ;; Agenda
+    (setq org-agenda-window-setup 'current-window)
+
+    (setq org-agenda-overriding-columns-format "%CATEGORY %50ITEM %SCHEDULED %DEADLINE")
+    (setq org-agenda-custom-commands
+          '(("H" "Detailed view"
+             ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
+                          (org-agenda-log-mode 1)
+                          (org-agenda-start-on-weekday nil)         ;; calendar begins today
+                          (org-agenda-repeating-timestamp-show-all t)
+                          )
+                      )
+              (alltodo ""
+                       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
+                        (org-agenda-overriding-header "Unscheduled TODO entries:")
+                        )
+                       )
+              (tags-todo "SCHEDULED>\"<+1w>\""
+                         ((org-agenda-overriding-header "Future TODO entries:")
+                          )
+                         )
+              (tags-todo "DEADLINE>\"<+1w>\""
+                         ((org-agenda-overriding-header "Future Deadlines:")
+                          )
+                         )
+              )
+             )
+            ("h" "Main view"
+             ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
+                          (org-agenda-log-mode 1)
+                          (org-agenda-start-on-weekday nil)         ;; calendar begins today
+                          (org-agenda-repeating-timestamp-show-all t)
+                          (org-agenda-use-time-grid t))
+                      )
+              (alltodo ""
+                       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
+                        (org-agenda-overriding-header "Unscheduled TODO entries:")
+                        )
+                       )
+              )
+             )
+            )
+          )
+    (setq org-agenda-files (quote ("~/Dropbox/org")))
+    (setq org-log-done 'time)
+    (setq org-agenda-skip-deadline-if-done t)
+    (setq org-agenda-skip-scheduled-if-done t)
+    (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+    (setq org-track-ordered-property-with-tag t)
+    (setq org-enforce-todo-dependencies t)
+    (setq org-agenda-dim-blocked-tasks 'invisible)
+    (setq org-agenda-show-inherited-tags 'nil)
+    (setq org-support-shift-select t)
+    (setq org-publish-project-alist
+          '(("html"
+             :base-directory "~/Seafile/org/"
+             :base-extension "org"
+             :publishing-directory "~/Seafile/org/exports"
+             :publishing-function org-html-publish-to-html)
+            ("pdf"
+             :base-directory "~/Seafile/org/"
+             :base-extension "org"
+             :publishing-directory "~/Seafile/org/exports"
+             :publishing-function org-latex-publish-to-pdf)
+            ("all" :components ("html" "pdf"))))
+    (setq org-agenda-time-grid   '((daily today)
+                                   "--------------------"
+                                   (800 1000 1200 1400 1600 1800 2000 2200)))
+    (setq org-latex-pdf-process
+          '("latexmk -xelatex -shell-escape -interaction=nonstopmode -output-directory=%o %f"))
+    (defun my-org-mode-hook()
+      (progn
+        (auto-fill-mode 1)))
+    (add-hook 'org-mode-hook 'my-org-mode-hook)
+    ;; Run/highlight code using babel in org-mode
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '(
+       (python . t)
+       (C . t)
+       ))
+    ;; Syntax hilight in #+begin_src blocks
+    (setq org-src-fontify-natively t)
+    ;; Capturing
+    (setq org-capture-templates
+          '(
+            ("t" "Tasks" entry
+             (file+headline "~/Seafile/org/todo.org" "Inbox")
+             "* TODO %^{Task}
+SCHEDULED: %^t
+%<%Y-%m-%d %H:%M>
+%?
+")
+            ("a" "Appointment" entry
+             (file+headline "~/Seafile/org/calendar.org" "Inbox")
+             "* %^{Appointment}
+%^t
+%?
+")
+            ("T" "Quick task" entry
+             (file+headline "~/Seafile/org/todo.org" "Inbox")
+             "* TODO %^{Task}"
+             :immediate-finish t)
+            ("B" "Book" entry
+             (file+headline "~/Seafile/org/books.org" "Inbox")
+             "* %^{Title}  %^g
+%i
+*Author(s):* %^{Author}
+
+%?
+
+%U"
+             )
+            ("e" "Email Task" entry
+             (file+headline "~/Seafile/org/todo.org" "Email")
+             "* TODO %^{Title}
+%a
+%?
+"
+             )
+            )
+          )
+    (setq org-icalendar-timezone "Europe/Berlin")
+    (setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due))
+    (setq org-icalendar-combined-agenda-file "~/Seafile/org/agenda.ics")
+
+    ;; async export
+    (setq org-export-async-debug nil)
+    (setq org-export-in-background t)
+
+    ;; Org Projectile
+    (use-package org-projectile
+      :bind (("C-c n p" . org-projectile:project-todo-completing-read)
+             ("C-c n c" . org-capture))
+      :ensure t
+      :demand t
+      :config
+      (setq org-projectile:projects-file "~/Seafile/org/projects.org")
+      (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "p"))
+      (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "l" "* TODO %? %a\n" "Linked Project TODO"))
+      )
+
+    ;;(use-package calfw-org
+    ;;  :config
+    ;;  ;; 対象ファイル
+    ;;  (setq cfw:org-icalendars nil)
+    ;;  ;; First day of the week  0:Sunday, 1:Monday
+    ;;  (setq calendar-week-start-day 1))
+
+    )
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (gnuplot . t)
+     (latex . t)
+     (ledger . t)
+     (ocaml . nil)
+     (python . t)
+     (ruby . t)
+     (screen . nil)
+     (sh . t)
+     (sql . nil)
+     (sqlite . t)))
+
+  (setq org-confirm-babel-evaluate nil)
+
+  (defun org-babel-remove-result-buffer ()
+  "Remove results from every code block in buffer."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward org-babel-src-block-regexp nil t)
+      (org-babel-remove-result))))
+  (global-set-key (kbd "C-c C-v C-k") 'org-babel-remove-result-buffer)
+
+;;  (use-package org-depend)
+;;  (use-package org-mac-link)
+  )
+
+(eval-after-load 'ox ;; shouldn't be byte compiled.
+  '(when (and user-init-file (buffer-file-name)) ;; don't do it in async
+     (setq org-export-async-init-file "~/.emacs.d/init.el")
+     )
+  )
+
+
+(defun my-add-current-timestamp()
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d %H:%M"))
+  )
+
+
+(defun kiwon/org-agenda-redo-in-other-window ()
+  "Call org-agenda-redo function even in the non-agenda buffer."
+  (interactive)
+  (let ((agenda-window (get-buffer-window org-agenda-buffer-name t)))
+    (when agenda-window
+      (with-selected-window agenda-window (org-agenda-redo)))))
+
+;;(run-at-time nil 60 'kiwon/org-agenda-redo-in-other-window)
+
+;; I don't want to be warned about discarding undo info.
+(unless (boundp 'warning-suppress-types)
+  (setq warning-suppress-types nil))
+(push '(undo discard-info) warning-suppress-types)
+
+;; Provides function to export current org buffer as JSON structure
+;; to $file.org.json. Adapted from an org-mode mailing post by
+;; Brett Viren: https://lists.gnu.org/archive/html/emacs-orgmode/2014-01/msg00338.html
+(require 'json)
+(defun org-export-json ()
+  (interactive)
+  (let* ((tree (org-element-parse-buffer 'object nil)))
+    (org-element-map tree (append org-element-all-elements
+                                  org-element-all-objects '(plain-text))
+      (lambda (x)
+        (if (org-element-property :parent x)
+            (org-element-put-property x :parent "none"))
+        (if (org-element-property :structure x)
+            (org-element-put-property x :structure "none"))
+        ))
+    (write-region
+     (json-encode tree)
+     nil (concat (buffer-file-name) ".json"))))
+
+(defun cli-org-export-json ()
+  (let ((org-file-path (car command-line-args-left))
+        (other-load-files (cdr command-line-args-left)))
+    (mapc 'load-file other-load-files)
+    (find-file org-file-path)
+    (org-mode)
+    (message "Exporting to JSON: %s" (car command-line-args-left))
+    (org-export-json)))
+
+(add-hook 'org-mode-hook
+      '(lambda ()
+             (setq org-file-apps
+                   (append '(
+                             ("\\.png\\'" . "gwenview %s")
+                             ("\\.jpg\\'" . "gwenview %s")
+                             ("\\.pdf\\'" . "okular %s")
+                             ("\\.docx\\'" . "lowriter %s")
+                             ("\\.ppt\\'" . "loimpress %s")
+                             ("\\.xls\\'" . "localc %s")
+                             ) org-file-apps ))))
+
+(defun org-show-current-heading-tidily ()
+  "Show next entry, keeping other entries closed."
+  (interactive)
+  (if (save-excursion (end-of-line) (outline-invisible-p))
+      (progn (org-show-entry) (show-children))
+    (outline-back-to-heading)
+    (unless (and (bolp) (org-on-heading-p))
+      (org-up-heading-safe)
+      (hide-subtree)
+      (error "Boundary reached"))
+    (org-overview)
+    (org-reveal t)
+    (org-show-entry)
+    (show-children)))
+#+END_SRC
+
+
+** TeX
+
+
+#+BEGIN_SRC emacs-lisp
+;; AucTeX
+(use-package auctex
+  :ensure t
+  :mode ("\\.tex\\'" . latex-mode)
+  :commands (latex-mode LaTeX-mode plain-tex-mode)
+  :init
+  (progn
+    (setq TeX-auto-save t)
+    (setq TeX-parse-self t)
+    (setq-default TeX-master nil)
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    (setq reftex-plug-into-AUCTeX t)
+    (setq-default TeX-PDF-mode t)
+    (setq-default TeX-engine 'xetex)
+
+    ;; use Skim as default pdf viewer
+    ;; Skim's displayline is used for forward search (from .tex to .pdf)
+    ;; option -b highlights the current line; option -g opens Skim in the background  
+    (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+    (setq TeX-view-program-list
+          '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g -r %n %o %b")))
+    (setq-default TeX-auto-local "~/.auctex-auto")
+    (add-hook 'TeX-mode-hook 'auto-fill-mode)
+    (add-hook 'TeX-mode-hook
+          '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))
+    )
+  )
+#+END_SRC
+
+
+** Other
+
+*** Markdown
+
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package markdown-mode
+  :ensure t
+  :mode (("\\.md\\'" . markdown-mode)
+  	 ("\\.mdwn\\'" . markdown-mode)
+  	 ("\\.markdown\\'" . markdown-mode))
+  )
+
+#+END_SRC
+
+
+*** Deft
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package deft
+  :ensure t
+  :bind ("C-c d" . deft)
+  :config
+  (setq deft-extensions '("org")
+        deft-default-extension "org"
+		deft-directory "~/Seafile/org"
+		;;deft-text-mode 'org-mode
+		deft-use-filename-as-title t
+		deft-use-filter-string-for-filename t)
+  )
+
+;;advise deft-new-file-named to replace spaces in file names with -
+(defun bjm-deft-strip-spaces (args)
+  "Replace spaces with - in the string contained in the first element of the list args. Used to advise deft's file naming function."
+  (list (replace-regexp-in-string " " "-" (car args)))
+  )
+(advice-add 'deft-new-file-named :filter-args #'bjm-deft-strip-spaces)
+
+;;advise deft to save window config
+(defun bjm-deft-save-windows (orig-fun &rest args)
+  (setq bjm-pre-deft-window-config (current-window-configuration))
+  (apply orig-fun args)
+  )
+
+(advice-add 'deft :around #'bjm-deft-save-windows)
+
+;;function to quit a deft edit cleanly back to pre deft window
+(defun bjm-quit-deft ()
+  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
+  (interactive)
+  (save-buffer)
+  (kill-this-buffer)
+  (switch-to-buffer "*Deft*")
+  (kill-this-buffer)
+  (when (window-configuration-p bjm-pre-deft-window-config)
+    (set-window-configuration bjm-pre-deft-window-config)
+    )
+  )
+
+(global-set-key (kbd "C-c q") 'bjm-quit-deft)
+#+END_SRC
+
+
+* Programming-related
+
+** General
+
+*** Hotkeys
+
+#+BEGIN_SRC emacs-lisp
+;; == Recompile Hotkey ==
+(global-set-key (kbd "C-c c") 'compile-again)
+(setq compilation-last-buffer nil)
+(defun compile-again (pfx)
+  """Run the same compile as the last time.
+
+If there was no last time, or there is a prefix argument, this acts like
+M-x compile.
+"""
+ (interactive "p")
+ (if (and (eq pfx 1)
+      compilation-last-buffer)
+     (progn
+       (set-buffer compilation-last-buffer)
+       (revert-buffer t t))
+   (call-interactively 'compile)))
+#+END_SRC
+
+
+*** Font faces
+
+
+#+BEGIN_SRC emacs-lisp
+;; == highlight TODO/FIXME etc. ==
+(setq hl-todo-keyword-faces
+  '(("HOLD" . "#d0bf8f")
+    ("TODO" . "#cc9393")
+    ("NEXT" . "#dca3a3")
+    ("THEM" . "#dc8cc3")
+    ("PROG" . "#7cb8bb")
+    ("OKAY" . "#7cb8bb")
+    ("DONT" . "#5f7f5f")
+    ("FAIL" . "#8c5353")
+    ("DONE" . "#afd8af")
+    ("FIXME" . "#cc9393")
+    ("XXX"   . "#cc9393")
+    ("XXXX"  . "#cc9393")
+    ("???"   . "#cc9393")))
+(global-hl-todo-mode 1)
+#+END_SRC
+
+
+*** Yasnippet
+
+#+BEGIN_SRC emacs-lisp
+;; == yasnippet ==
+(use-package yasnippet
+  :ensure t
+  :diminish yas-minor-mode
+  :mode ("/\\.emacs\\.d/snippets/" . snippet-mode)
+  :init
+  (progn
+    (yas-global-mode 1)))
+#+END_SRC
+
+
+*** Company
+
+
+#+BEGIN_SRC emacs-lisp
+;; == company-mode ==
+(use-package company
+  :ensure t
+  :defer t
+  :init (add-hook 'after-init-hook 'global-company-mode)
+  :config
+  (use-package company-irony :ensure t :defer t)
+  (setq company-idle-delay          0
+	company-minimum-prefix-length   2
+	company-show-numbers            t
+	company-tooltip-limit           20
+	company-dabbrev-downcase        nil
+	company-backends                '((company-irony))
+	)
+  (use-package company-statistics
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'company-statistics-mode))
+  :bind ("C-;" . company-complete-common)
+  )
+#+END_SRC
+
+
+*** Projectile
+
+
+#+BEGIN_SRC emacs-lisp
+;; == projectile ==
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-global-mode)
+  (setq projectile-completion-system 'helm)
+  (use-package helm-projectile
+    :ensure t
+    :bind (("C-x C-g" . helm-mini)
+           ("C-x C-f" . helm-find-files))
+    :init
+    (helm-projectile-on)
+    )
+  )
+#+END_SRC
+
+
+*** Swiper
+
+
+#+BEGIN_SRC emacs-lisp
+;; == swiper ==
+
+(use-package swiper-helm
+  :ensure t
+  :bind ("C-c C-g" . swiper)
+  )
+#+END_SRC
+
+
+*** Magit
+
+
+#+BEGIN_SRC emacs-lisp
+;; == magit ==
+(use-package magit
+  :ensure t
+  :defer t
+  :bind ("C-x g" . magit-status)
+  :config(
+          (magit-diff-use-overlays nil)
+          )
+  )
+#+END_SRC
+
+
+*** Flycheck
+
+
+#+BEGIN_SRC emacs-lisp
+;; == flycheck ==
+(use-package flycheck
+  :ensure t
+  :defer t
+  :init
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  :config
+  (progn
+    (add-hook 'c++-mode-hook (lambda () (setq flycheck-clang-language-standard "c++11")))))
+
+#+END_SRC
+
+
+** C++
+
+*** General
+
+
+#+BEGIN_SRC emacs-lisp
+(setq c-default-style "stroustrup")
+(setq c-basic-offset 4)
+
+;; == Highlight organizational keywords ==
+(add-hook 'c-mode-common-hook
+               (lambda ()
+                (font-lock-add-keywords nil
+                                        '(("\\<\\(FIXME\\|TODO\\|BUG\\):" 1 font-lock-warning-face t)))))
+
+;; == Code folding ==
+(add-hook 'c-mode-common-hook
+  (lambda()
+    (local-set-key (kbd "C-c <right>") 'hs-show-block)
+    (local-set-key (kbd "C-c <left>")  'hs-hide-block)
+    (local-set-key (kbd "C-c <up>")    'hs-hide-all)
+    (local-set-key (kbd "C-c <down>")  'hs-show-all)
+    (hs-minor-mode t)))
+
+;; == Make .h an extension for cpp ==
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
+#+END_SRC
+
+
+*** Irony
+
+
+#+BEGIN_SRC emacs-lisp
+;; == irony-mode ==
+(use-package irony
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (add-hook 'c++-mode-hook 'irony-mode)
+    (add-hook 'c-mode-hook 'irony-mode)
+    (add-hook 'objc-mode-hook 'irony-mode)
+    (add-to-list 'irony-supported-major-modes 'glsl-mode)
+    ;; replace the `completion-at-point' and `complete-symbol' bindings in
+    ;; irony-mode's buffers by irony-mode's function
+    (defun my-irony-mode-hook ()
+      (define-key irony-mode-map [remap completion-at-point]
+        'irony-completion-at-point-async)
+      (define-key irony-mode-map [remap complete-symbol]
+        'irony-completion-at-point-async))
+    (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+    )
+  )
+#+END_SRC
+
+
+*** Rtags
+
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package rtags
+  :ensure t
+  :demand
+  :bind (("C-x C-<" . rtags-location-stack-back)
+         ("C-x C-y" . rtags-find-symbol-at-point))
+  )
+
+#+END_SRC
+
+
+*** Cmake
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package cmake-ide
+  :ensure t
+  :init
+  (cmake-ide-setup)
+  )
+
+(use-package cmake-mode
+  :ensure t
+  :mode (("/CMakeLists\\.txt\\'" . cmake-mode)
+	 ("\\.cmake\\'" . cmake-mode)))
+#+END_SRC
+
+
+*** Clang
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package clang-format
+  :ensure t
+  :bind (("C-M-<tab>" . clang-format-buffer)
+    )
+  )
+#+END_SRC
+
+
+** Python
+
+*** General
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'python-mode-hook
+          (lambda ()
+		    (setq-default indent-tabs-mode t)
+		    (setq-default tab-width 4)
+		    (setq-default py-indent-tabs-mode t)
+            (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
+
+#+END_SRC
+
+
+*** Jedi
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-jedi
+  :ensure t
+  :config
+  (progn
+    (add-to-list 'company-backends 'company-jedi)
+    )
+  )
+#+END_SRC
+
+
+*** Elpy
+
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'package-archives
+             '("elpy" . "https://jorgenschaefer.github.io/packages/"))
+
+(use-package elpy
+  :commands elpy-enable
+  :init (elpy-enable)
+  :config
+  (progn
+    (setq elpy-rpc-backend "jedi")
+    (setq elpy-rpc-python-command "python")
+    (setq pyenv-show-active-python-in-modeline t)
+    (require 'pyenv-mode-auto)
+
+    ;;(setq jedi:environment-root "env")
+    ;;(setq jedi:environment-virtualenv
+    ;;      (append python-environment-virtualenv
+    ;;              '("--python" "python3")))
+    )
+  )
+#+END_SRC
+
+
+*** Yasnippet
+
+
+#+BEGIN_SRC emacs-lisp
+(defun company-yasnippet-or-completion ()
+  "Solve company yasnippet conflicts."
+  (interactive)
+  (let ((yas-fallback-behavior
+         (apply 'company-complete-common nil)))
+    (yas-expand)))
+
+(add-hook 'company-mode-hook
+          (lambda ()
+            (substitute-key-definition
+             'company-complete-common
+             'company-yasnippet-or-completion
+             company-active-map)))
+
+#+END_SRC
+
+
+*** PyEnv
+
+
+#+BEGIN_SRC emacs-lisp
+
+;; PyEnv
+(setenv "PATH" (concat "~/.pyenv/shims:~/.pyenv/bin:" (getenv "PATH")))
+(setq exec-path (cons "~/.pyenv/shims" exec-path))
+
+#+END_SRC
+
+
+** Miscellaneous
+
+*** GLSL
+
+
+#+BEGIN_SRC emacs-lisp
+;; == glsl ==
+(use-package glsl-mode
+  :ensure t
+  :if (eq system-type 'darwin)
+  :init
+  (append auto-mode-alist '('("\\.glsl\\'" . glsl-mode)
+                            '("\\.vert\\'" . glsl-mode)
+                            '("\\.frag\\'" . glsl-mode)
+                            '("\\.geom\\'" . glsl-mode))))
+
+#+END_SRC
+
+
+*** Swift
+
+
+#+BEGIN_SRC emacs-lisp
+;; == swift mode ==
+;(use-package swift-mode
+;  :ensure t
+;  :config
+;  (add-to-list 'flycheck-checkers 'swift)
+;  (defvar flycheck-swift-sdk-path)
+;  (setq flycheck-swift-sdk-path "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk")
+;  )
+#+END_SRC
+
+
+*** Ruby
+
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package ruby-mode
+  :ensure t
+  :config
+  (progn
+    (use-package robe
+      :ensure t
+      :config
+      (progn
+        (add-to-list 'company-backends 'company-robe)
+        (add-hook 'ruby-mode-hook 'robe-mode)
+        )
+      )
+    )
+  :mode (("\\.rake$" . ruby-mode)
+         ("\\.gemspec$" . ruby-mode)
+         ("\\.ru$" . ruby-mode)
+         ("Rakefile$" . ruby-mode)
+         ("Thorfile$" . ruby-mode)
+         ("Gemfile$" . ruby-mode)
+         ("Capfile$" . ruby-mode)
+         ("Guardfile$" . ruby-mode))
+  )
+
+(use-package haml-mode
+  :ensure t
+  :mode "\\.haml\\'")
+#+END_SRC
+
+
+*** Go
+
+
+#+BEGIN_SRC emacs-lisp
+;; https://github.com/Schnouki/dotfiles/blob/master/emacs/init-30-modes.el
+(use-package go-mode
+  :ensure t
+  :mode "\\.go\\'"
+  :commands (godoc gofmt gofmt-before-save)
+  :init
+  (progn
+    (require 'go-mode-autoloads)
+    (setq gofmt-command "goimports")
+    (folding-add-to-marks-list 'go-mode "// {{{" "// }}}" nil t)
+    (defun schnouki/maybe-gofmt-before-save ()
+      (when (eq major-mode 'go-mode)
+	(gofmt-before-save)))
+    (add-hook 'before-save-hook 'schnouki/maybe-gofmt-before-save)
+
+    ;; From https://github.com/bradleywright/emacs.d
+    ;; Update GOPATH if there's a _vendor (gom) or vendor (gb) dir
+    (defun schnouki/set-local-go-path ()
+      "Sets a local GOPATH if appropriate"
+      (let ((current-go-path (getenv "GOPATH")))
+        (catch 'found
+          (dolist (vendor-dir '("_vendor" "vendor"))
+            (let ((directory (locate-dominating-file (buffer-file-name) vendor-dir)))
+              (when directory
+                (make-local-variable 'process-environment)
+                (let ((local-go-path (concat (expand-file-name directory) vendor-dir)))
+                  (if (not current-go-path)
+                      (setenv "GOPATH" local-go-path)
+                    (unless (string-match-p local-go-path current-go-path)
+                      (setenv "GOPATH" (concat local-go-path ":" current-go-path))))
+                  (setq-local go-command
+                              (concat "GOPATH=\"" local-go-path ":" (expand-file-name directory) ":${GOPATH}\" " go-command))
+                  (throw 'found local-go-path))))))))
+    (add-hook 'go-mode-hook 'schnouki/set-local-go-path))
+  :config
+  (progn
+    ;; http://yousefourabi.com/blog/2014/05/emacs-for-go/
+    (bind-key "C-c C-f" 'gofmt go-mode-map)
+    (bind-key "C-c C-g" 'go-goto-imports go-mode-map)
+    (bind-key "C-c C-k" 'godoc go-mode-map)
+    (bind-key "C-c C-r" 'go-remove-unused-imports go-mode-map)))
+
+(use-package company-go
+  :ensure t
+  :commands company-go
+  :init (add-to-list 'company-backends 'company-go)
+  :config
+  (progn
+    (add-to-list 'company-backends 'company-go)
+    (add-hook 'go-mode-hook 'company-mode)
+    ))
+
+(use-package go-eldoc
+  :ensure t
+  :commands go-eldoc-setup
+  :init (add-hook 'go-mode-hook 'go-eldoc-setup))
+#+END_SRC
+
+

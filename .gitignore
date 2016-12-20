@@ -23,3 +23,10 @@ session.*
 .\#*
 \#*
 kkcrc
+
+# Cache
+settings.el
+*-cache.el
+
+# Old config
+config/
