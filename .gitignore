@@ -35,3 +35,4 @@ themes/
 wl.el
 scripts/
 .gitmodules
+dict/
