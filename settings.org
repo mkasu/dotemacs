@@ -311,7 +311,7 @@
 #+END_SRC
 
 
-*** Desktop + 
+*** Desktop +
 
 
 #+BEGIN_SRC emacs-lisp
@@ -396,7 +396,6 @@
      (define-key mozc-mode-map (kbd "<zenkaku-hankaku>") 'toggle-input-method)))
   )
 #+END_SRC
-
 
 *** Miscellaneous
 
@@ -501,7 +500,7 @@
              )
             )
           )
-    (setq org-agenda-files (quote ("~/Dropbox/org")))
+    (setq org-agenda-files (quote ("~/Seafile/org")))
     (setq org-log-done 'time)
     (setq org-agenda-skip-deadline-if-done t)
     (setq org-agenda-skip-scheduled-if-done t)
@@ -721,6 +720,53 @@ SCHEDULED: %^t
     (show-children)))
 #+END_SRC
 
+*** Japanese
+
+#+BEGIN_SRC emacs-lisp
+(when (require 'org-install nil t)
+  ;; LaTeX article class
+  (setq org-latex-classes
+        '(
+
+("article"
+           "\\documentclass[11pt,a4paper]{jarticle}
+\\usepackage{amsmath}
+\\usepackage{amsthm}
+\\usepackage{bm}
+\\usepackage[dvipdfmx,hiresbb]{graphicx}
+\\usepackage[dvipdfmx]{color}"
+           ("\\section{%s}" . "\\section*{%s}")
+           ("\\subsection{%s}" . "\\subsection*{%s}")
+           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+           ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+
+("murarin"
+           "\\documentclass[a4j,twoside]{murarin-utf8}
+\\usepackage{amsmath}
+\\usepackage{amsthm}
+\\usepackage{bm}
+\\usepackage[dvipdfmx,hiresbb]{graphicx}
+\\usepackage[dvipdfmx]{color}"
+          ;; ("\\chapter{%s}" . "\\chapter*{%s}")
+           ("\\section{%s}" . "\\section*{%s}")
+           ("\\subsection{%s}" . "\\subsection*{%s}")
+           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+           ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+
+))
+
+
+(setq org-latex-pdf-process
+      '("platex %f"
+        "platex %f"
+        "bibtex %b"
+        "platex %f"
+        "platex %f"
+        "dvipdfmx %b.dvi")))
+#+END_SRC
+
 
 ** TeX
 
@@ -746,7 +792,7 @@ SCHEDULED: %^t
 
     ;; use Skim as default pdf viewer
     ;; Skim's displayline is used for forward search (from .tex to .pdf)
-    ;; option -b highlights the current line; option -g opens Skim in the background  
+    ;; option -b highlights the current line; option -g opens Skim in the background
     (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
     (setq TeX-view-program-list
           '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b -g -r %n %o %b")))
@@ -1301,5 +1347,3 @@ M-x compile.
   :commands go-eldoc-setup
   :init (add-hook 'go-mode-hook 'go-eldoc-setup))
 #+END_SRC
-
-
