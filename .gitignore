@@ -33,3 +33,5 @@ network-security.data
 config/
 themes/
 wl.el
+scripts/
+.gitmodules
