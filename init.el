@@ -38,23 +38,4 @@
  (expand-file-name "settings.org"
                    user-emacs-directory))
 
-;; === Basics ===
-;;(load-file "~/.emacs.d/config/10-look.el")
-;;(load-file "~/.emacs.d/config/11-behave.el")
-;;(load-file "~/.emacs.d/config/12-utf8.el")
-;;(load-file "~/.emacs.d/config/13-jp.el")
-;;(load-file "~/.emacs.d/config/19-mail.el")
-
-;; === Documents ===
-;;(load-file "~/.emacs.d/config/30-org.el")
-;;(load-file "~/.emacs.d/config/31-latex.el")
-;;(load-file "~/.emacs.d/config/32-other.el")
-
-;; === Programming ===
-;;(load-file "~/.emacs.d/config/40-prog-gen.el")
-;;(load-file "~/.emacs.d/config/41-prog-cpp.el")
-;;(load-file "~/.emacs.d/config/42-prog-python.el")
-;;(load-file "~/.emacs.d/config/43-prog-ruby.el")
-;;(load-file "~/.emacs.d/config/44-prog-go.el")
-
 ;;; init.el ends here
