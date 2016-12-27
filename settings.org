@@ -304,9 +304,6 @@
 #+BEGIN_SRC emacs-lisp
 (use-package paradox
   :ensure t
-  :config
-  (setq paradox-execute-asynchronously nil
-        paradox-github-token t)
   )
 #+END_SRC
 

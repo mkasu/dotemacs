@@ -5,7 +5,7 @@
 
 ;;; Needs to come first so the package-archives customization gets
 ;;; picked up.
-(setq custom-file "~/.emacs.d/config/01-custom.el")
+(setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
 ;; User Info
