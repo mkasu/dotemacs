@@ -372,13 +372,6 @@
 
 #+BEGIN_SRC emacs-lisp
 ;; 日本語入力
-(defconst my-lisp-dir (cond
-                       ((equal system-type 'gnu/linux) "/usr/share/emacs/site-lisp/")
-                       ((equal system-type 'darwin) (concat "/usr/local/Cellar/emacs/" (number-to-string emacs-major-version) "." (number-to-string emacs-minor-version) "/share/emacs/site-lisp/"))
-                       (t (concat "/usr/share/emacs24/site-lisp/"))))
-
-(add-to-list 'load-path (concat my-lisp-dir "emacs-mozc"))
-
 (use-package mozc
   :config
   (require 'mozc)
@@ -605,6 +598,7 @@ SCHEDULED: %^t
 
     )
 
+  (require 'ob-python)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
@@ -715,6 +709,12 @@ SCHEDULED: %^t
     (org-reveal t)
     (org-show-entry)
     (show-children)))
+
+(setq org-ehtml-docroot (expand-file-name "~/Seafile/org"))
+(setq org-ehtml-everything-editable t)
+(require 'org-ehtml)
+(ws-start org-ehtml-handler 8888)
+
 #+END_SRC
 
 *** Japanese
