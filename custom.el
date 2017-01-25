@@ -8,7 +8,7 @@
 	(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
  '(package-selected-packages
    (quote
-	(json-mode pkgbuild-mode git-gutter mozc htmlize company go-mode helm helm-core jedi-core markdown-mode projectile python-environment pythonic swiper pcache org helm-projectile use-package org-ehtml org-preview-html framemove deft company-statistics hl-todo highlight-indentation highlight-chars xpm wanderlust undo-tree swiper-helm spaceline rtags robe pyenv-mode-auto popwin paradox org-projectile moe-theme migemo magit jade-mode helm-ag haml-mode go-eldoc glsl-mode flycheck elpy dracula-theme desktop+ darkokai-theme d-mode company-jedi company-irony company-go color-theme-sanityinc-tomorrow cmake-mode cmake-ide clang-format auctex)))
+	(benchmark-init json-mode pkgbuild-mode git-gutter mozc htmlize company go-mode helm helm-core jedi-core markdown-mode projectile python-environment pythonic swiper pcache org helm-projectile use-package org-ehtml org-preview-html framemove deft company-statistics hl-todo highlight-indentation highlight-chars xpm wanderlust undo-tree swiper-helm spaceline rtags robe pyenv-mode-auto popwin paradox org-projectile moe-theme migemo magit jade-mode helm-ag haml-mode go-eldoc glsl-mode flycheck elpy dracula-theme desktop+ darkokai-theme d-mode company-jedi company-irony company-go color-theme-sanityinc-tomorrow cmake-mode cmake-ide clang-format auctex)))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

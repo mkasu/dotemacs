@@ -5,7 +5,70 @@
 
 * Base stuff
 
+#+BEGIN_SRC emacs-lisp
+;;; Needs to come first so the package-archives customization gets
+;;; picked up.
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+
+;; User Info
+(setq user-full-name "Marc A. Kastner")
+(setq user-mail-address "marc@mkasu.org")
+
+#+END_SRC
+
+** Self recompile this file on changes
+
+#+BEGIN_SRC emacs-lisp
+   (defun tangle-init ()
+     "If the current buffer is 'init.org' the code-blocks are
+   tangled, and the tangled file is compiled."
+     (when (equal (buffer-file-name)
+                  (expand-file-name (concat user-emacs-directory "init.org")))
+       ;; Avoid running hooks when tangling.
+       (let ((prog-mode-hook nil))
+         (org-babel-tangle)
+         (byte-compile-file (concat user-emacs-directory "init.el")))))
+
+   (add-hook 'after-save-hook 'tangle-init)
+#+END_SRC
+
+** Secret file
+
+#+BEGIN_SRC emacs-lisp
+
+;; This file contains encryption keys etc. and won't be uploaded to repositories.
+   (add-hook
+    'after-init-hook
+    (lambda ()
+      (let ((private-file (concat user-emacs-directory "secret.el")))
+        (when (file-exists-p private-file)
+          (load-file private-file)))))
+#+END_SRC
+
 ** Initial
+
+#+BEGIN_SRC emacs-lisp
+(require 'package
+    (setq package-enable-at-startup nil)
+    (setq package-check-signature nil))
+
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+
+; activate all the packages (in particular autoloads)
+(package-initialize)
+
+; fetch the list of packages available
+(unless package-archive-contents
+  (package-refresh-contents))
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (eval-when-compile
@@ -15,7 +78,6 @@
 
 (require 'bind-key)
 #+END_SRC
-
 
 ** Look
 
@@ -101,12 +163,12 @@
 #+BEGIN_SRC emacs-lisp
 (use-package powerline
   :ensure t
-  :init (powerline-default-theme)
+  :config (powerline-default-theme)
   )
 
 (use-package spaceline
   :ensure t
-  :init
+  :config
   (progn
     (require 'spaceline-config)
     (setq powerline-default-separator 'wave)
@@ -262,7 +324,7 @@
 (use-package helm
           :diminish helm-mode
           :ensure t
-          :init
+          :config
           (progn
             (require 'helm-config)
             (helm-mode)
@@ -354,7 +416,6 @@
 ;; ローマ字で日本語の検索
 (use-package migemo
   :ensure t
-  :demand t
   :config
   (setq migemo-user-dictionary nil)
   (setq migemo-regex-dictionary nil)
@@ -435,316 +496,320 @@
 
 
 #+BEGIN_SRC emacs-lisp
-(use-package org
-  :ensure t
-  :bind ("C-c a" . org-agenda)
-  :bind ("C-c b" . org-time-stamp-inactive)
-  :init
-  (progn
-    (add-hook 'org-mode-hook 'visual-line-mode)
-    (add-hook 'org-mode-hook 'org-indent-mode)
-    (add-hook 'org-mode-hook 'flyspell-mode)
-	(setq org-image-actual-width nil)
-    (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
-      (add-hook hook (lambda () (flycheck-mode -1))))
-    ;; Agenda
-    (setq org-agenda-window-setup 'current-window)
+  (use-package org
+	:ensure t
+	:defer t
+	:bind ("C-c a" . org-agenda)
+	:bind ("C-c b" . org-time-stamp-inactive)
+	:config
+	(progn
+      (add-hook 'org-mode-hook 'visual-line-mode)
+      (add-hook 'org-mode-hook 'org-indent-mode)
+      (add-hook 'org-mode-hook 'flyspell-mode)
+	  (setq org-image-actual-width nil)
+      (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+		(add-hook hook (lambda () (flycheck-mode -1))))
+      ;; Agenda
+      (setq org-agenda-window-setup 'current-window)
 
-    (setq org-agenda-overriding-columns-format "%CATEGORY %50ITEM %SCHEDULED %DEADLINE")
-    (setq org-agenda-custom-commands
-          '(("H" "Detailed view"
-             ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
-                          (org-agenda-log-mode 1)
-                          (org-agenda-start-on-weekday nil)         ;; calendar begins today
-                          (org-agenda-repeating-timestamp-show-all t)
+      (setq org-agenda-overriding-columns-format "%CATEGORY %50ITEM %SCHEDULED %DEADLINE")
+      (setq org-agenda-custom-commands
+			'(("H" "Detailed view"
+               ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
+							(org-agenda-log-mode 1)
+							(org-agenda-start-on-weekday nil)         ;; calendar begins today
+							(org-agenda-repeating-timestamp-show-all t)
+							)
+						)
+				(alltodo ""
+						 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
+                          (org-agenda-overriding-header "Unscheduled TODO entries:")
                           )
-                      )
-              (alltodo ""
-                       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
-                        (org-agenda-overriding-header "Unscheduled TODO entries:")
-                        )
-                       )
-              (tags-todo "SCHEDULED>\"<+1w>\""
-                         ((org-agenda-overriding-header "Future TODO entries:")
+						 )
+				(tags-todo "SCHEDULED>\"<+1w>\""
+                           ((org-agenda-overriding-header "Future TODO entries:")
+							)
+                           )
+				(tags-todo "DEADLINE>\"<+1w>\""
+                           ((org-agenda-overriding-header "Future Deadlines:")
+							)
+                           )
+				)
+               )
+              ("h" "Main view"
+               ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
+							(org-agenda-log-mode 1)
+							(org-agenda-start-on-weekday nil)         ;; calendar begins today
+							(org-agenda-repeating-timestamp-show-all t)
+							(org-agenda-use-time-grid t))
+						)
+				(alltodo ""
+						 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
+                          (org-agenda-overriding-header "Unscheduled TODO entries:")
                           )
-                         )
-              (tags-todo "DEADLINE>\"<+1w>\""
-                         ((org-agenda-overriding-header "Future Deadlines:")
-                          )
-                         )
+						 )
+				)
+               )
               )
-             )
-            ("h" "Main view"
-             ((agenda "" ((org-agenda-ndays 7)                      ;; overview of appointments
-                          (org-agenda-log-mode 1)
-                          (org-agenda-start-on-weekday nil)         ;; calendar begins today
-                          (org-agenda-repeating-timestamp-show-all t)
-                          (org-agenda-use-time-grid t))
-                      )
-              (alltodo ""
-                       ((org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
-                        (org-agenda-overriding-header "Unscheduled TODO entries:")
-                        )
-                       )
+			)
+      (setq org-agenda-files (quote ("~/Seafile/org")))
+      (setq org-log-done 'time)
+      (setq org-agenda-skip-deadline-if-done t)
+      (setq org-agenda-skip-scheduled-if-done t)
+      (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+      (setq org-track-ordered-property-with-tag t)
+      (setq org-enforce-todo-dependencies t)
+      (setq org-agenda-dim-blocked-tasks 'invisible)
+      (setq org-agenda-show-inherited-tags 'nil)
+      (setq org-support-shift-select t)
+      (setq org-publish-project-alist
+			'(("html"
+               :base-directory "~/Seafile/org/"
+               :base-extension "org"
+               :publishing-directory "~/Seafile/org/exports"
+               :publishing-function org-html-publish-to-html)
+              ("pdf"
+               :base-directory "~/Seafile/org/"
+               :base-extension "org"
+               :publishing-directory "~/Seafile/org/exports"
+               :publishing-function org-latex-publish-to-pdf)
+              ("all" :components ("html" "pdf"))))
+      (setq org-agenda-time-grid   '((daily today)
+									 "--------------------"
+									 (800 1000 1200 1400 1600 1800 2000 2200)))
+      (setq org-latex-pdf-process
+			'("latexmk -xelatex -shell-escape -interaction=nonstopmode -output-directory=%o %f"))
+      (defun my-org-mode-hook()
+		(progn
+          (auto-fill-mode 1)))
+      (add-hook 'org-mode-hook 'my-org-mode-hook)
+      ;; Run/highlight code using babel in org-mode
+      (org-babel-do-load-languages
+       'org-babel-load-languages
+       '(
+		 (python . t)
+		 (C . t)
+		 ))
+      ;; Syntax hilight in #+begin_src blocks
+      (setq org-src-fontify-natively t)
+      ;; Capturing
+      (setq org-capture-templates
+			'(
+              ("t" "Tasks" entry
+               (file+headline "~/Seafile/org/todo.org" "Inbox")
+               "* TODO %^{Task}
+  SCHEDULED: %^t
+  %<%Y-%m-%d %H:%M>
+  %?
+  ")
+              ("a" "Appointment" entry
+               (file+headline "~/Seafile/org/calendar.org" "Inbox")
+               "* %^{Appointment}
+  %^t
+  %?
+  ")
+              ("T" "Quick task" entry
+               (file+headline "~/Seafile/org/todo.org" "Inbox")
+               "* TODO %^{Task}"
+               :immediate-finish t)
+              ("B" "Book" entry
+               (file+headline "~/Seafile/org/books.org" "Inbox")
+               "* %^{Title}  %^g
+  %i
+  ,*Author(s):* %^{Author}
+
+  %?
+
+  %U"
+               )
+              ("e" "Email Task" entry
+               (file+headline "~/Seafile/org/todo.org" "Email")
+               "* TODO %^{Title}
+  %a
+  %?
+  "
+               )
               )
-             )
-            )
-          )
-    (setq org-agenda-files (quote ("~/Seafile/org")))
-    (setq org-log-done 'time)
-    (setq org-agenda-skip-deadline-if-done t)
-    (setq org-agenda-skip-scheduled-if-done t)
-    (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
-    (setq org-track-ordered-property-with-tag t)
-    (setq org-enforce-todo-dependencies t)
-    (setq org-agenda-dim-blocked-tasks 'invisible)
-    (setq org-agenda-show-inherited-tags 'nil)
-    (setq org-support-shift-select t)
-    (setq org-publish-project-alist
-          '(("html"
-             :base-directory "~/Seafile/org/"
-             :base-extension "org"
-             :publishing-directory "~/Seafile/org/exports"
-             :publishing-function org-html-publish-to-html)
-            ("pdf"
-             :base-directory "~/Seafile/org/"
-             :base-extension "org"
-             :publishing-directory "~/Seafile/org/exports"
-             :publishing-function org-latex-publish-to-pdf)
-            ("all" :components ("html" "pdf"))))
-    (setq org-agenda-time-grid   '((daily today)
-                                   "--------------------"
-                                   (800 1000 1200 1400 1600 1800 2000 2200)))
-    (setq org-latex-pdf-process
-          '("latexmk -xelatex -shell-escape -interaction=nonstopmode -output-directory=%o %f"))
-    (defun my-org-mode-hook()
-      (progn
-        (auto-fill-mode 1)))
-    (add-hook 'org-mode-hook 'my-org-mode-hook)
-    ;; Run/highlight code using babel in org-mode
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '(
+			)
+      (setq org-icalendar-timezone "Europe/Berlin")
+      (setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due))
+      (setq org-icalendar-combined-agenda-file "~/Seafile/org/agenda.ics")
+
+      ;; async export
+      (setq org-export-async-debug nil)
+      (setq org-export-in-background t)
+
+
+      ;;(use-package calfw-org
+      ;;  :config
+      ;;  ;; 対象ファイル
+      ;;  (setq cfw:org-icalendars nil)
+      ;;  ;; First day of the week  0:Sunday, 1:Monday
+      ;;  (setq calendar-week-start-day 1))
+
+
+	(require 'ob-python)
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '((emacs-lisp . t)
+       (gnuplot . t)
+       (latex . t)
+       (ledger . t)
+       (ocaml . nil)
        (python . t)
-       (C . t)
-       ))
-    ;; Syntax hilight in #+begin_src blocks
-    (setq org-src-fontify-natively t)
-    ;; Capturing
-    (setq org-capture-templates
-          '(
-            ("t" "Tasks" entry
-             (file+headline "~/Seafile/org/todo.org" "Inbox")
-             "* TODO %^{Task}
-SCHEDULED: %^t
-%<%Y-%m-%d %H:%M>
-%?
-")
-            ("a" "Appointment" entry
-             (file+headline "~/Seafile/org/calendar.org" "Inbox")
-             "* %^{Appointment}
-%^t
-%?
-")
-            ("T" "Quick task" entry
-             (file+headline "~/Seafile/org/todo.org" "Inbox")
-             "* TODO %^{Task}"
-             :immediate-finish t)
-            ("B" "Book" entry
-             (file+headline "~/Seafile/org/books.org" "Inbox")
-             "* %^{Title}  %^g
-%i
-*Author(s):* %^{Author}
+       (ruby . t)
+       (screen . nil)
+       (sh . t)
+       (sql . nil)
+       (sqlite . t)))
 
-%?
+	(setq org-confirm-babel-evaluate nil)
 
-%U"
-             )
-            ("e" "Email Task" entry
-             (file+headline "~/Seafile/org/todo.org" "Email")
-             "* TODO %^{Title}
-%a
-%?
-"
-             )
-            )
-          )
-    (setq org-icalendar-timezone "Europe/Berlin")
-    (setq org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due))
-    (setq org-icalendar-combined-agenda-file "~/Seafile/org/agenda.ics")
+	(defun org-babel-remove-result-buffer ()
+	"Remove results from every code block in buffer."
+	(interactive)
+	(save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward org-babel-src-block-regexp nil t)
+		(org-babel-remove-result))))
+	(global-set-key (kbd "C-c C-v C-k") 'org-babel-remove-result-buffer)
 
-    ;; async export
-    (setq org-export-async-debug nil)
-    (setq org-export-in-background t)
+  ;;  (use-package org-depend)
+  ;;  (use-package org-mac-link)
 
-    ;; Org Projectile
-    (use-package org-projectile
-      :bind (("C-c n p" . org-projectile:project-todo-completing-read)
-             ("C-c n c" . org-capture))
-      :ensure t
-      :demand t
-      :config
-      (setq org-projectile:projects-file "~/Seafile/org/projects.org")
-      (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "p"))
-      (add-to-list 'org-capture-templates (org-projectile:project-todo-entry "l" "* TODO %? %a\n" "Linked Project TODO"))
-      )
 
-    ;;(use-package calfw-org
-    ;;  :config
-    ;;  ;; 対象ファイル
-    ;;  (setq cfw:org-icalendars nil)
-    ;;  ;; First day of the week  0:Sunday, 1:Monday
-    ;;  (setq calendar-week-start-day 1))
+  (eval-after-load 'ox ;; shouldn't be byte compiled.
+	'(when (and user-init-file (buffer-file-name)) ;; don't do it in async
+       (setq org-export-async-init-file "~/.emacs.d/init.el")
+       )
+	)
 
-    )
 
-  (require 'ob-python)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (gnuplot . t)
-     (latex . t)
-     (ledger . t)
-     (ocaml . nil)
-     (python . t)
-     (ruby . t)
-     (screen . nil)
-     (sh . t)
-     (sql . nil)
-     (sqlite . t)))
+  (defun my-add-current-timestamp()
+	(interactive)
+	(insert (format-time-string "%Y-%m-%d %H:%M"))
+	)
 
-  (setq org-confirm-babel-evaluate nil)
 
-  (defun org-babel-remove-result-buffer ()
-  "Remove results from every code block in buffer."
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward org-babel-src-block-regexp nil t)
-      (org-babel-remove-result))))
-  (global-set-key (kbd "C-c C-v C-k") 'org-babel-remove-result-buffer)
+  (defun kiwon/org-agenda-redo-in-other-window ()
+	"Call org-agenda-redo function even in the non-agenda buffer."
+	(interactive)
+	(let ((agenda-window (get-buffer-window org-agenda-buffer-name t)))
+      (when agenda-window
+		(with-selected-window agenda-window (org-agenda-redo)))))
 
-;;  (use-package org-depend)
-;;  (use-package org-mac-link)
+  ;;(run-at-time nil 60 'kiwon/org-agenda-redo-in-other-window)
+
+  ;; I don't want to be warned about discarding undo info.
+  (unless (boundp 'warning-suppress-types)
+	(setq warning-suppress-types nil))
+  (push '(undo discard-info) warning-suppress-types)
+
+  ;; Provides function to export current org buffer as JSON structure
+  ;; to $file.org.json. Adapted from an org-mode mailing post by
+  ;; Brett Viren: https://lists.gnu.org/archive/html/emacs-orgmode/2014-01/msg00338.html
+  ;; (require 'json)
+  ;; (defun org-export-json ()
+  ;;   (interactive)
+  ;;   (let* ((tree (org-element-parse-buffer 'object nil)))
+  ;;     (org-element-map tree (append org-element-all-elements
+  ;;                                   org-element-all-objects '(plain-text))
+  ;;       (lambda (x)
+  ;;         (if (org-element-property :parent x)
+  ;;             (org-element-put-property x :parent "none"))
+  ;;         (if (org-element-property :structure x)
+  ;;             (org-element-put-property x :structure "none"))
+  ;;         ))
+  ;;     (write-region
+  ;;      (json-encode tree)
+  ;;      nil (concat (buffer-file-name) ".json"))))
+
+  ;; (defun cli-org-export-json ()
+  ;;   (let ((org-file-path (car command-line-args-left))
+  ;;         (other-load-files (cdr command-line-args-left)))
+  ;;     (mapc 'load-file other-load-files)
+  ;;     (find-file org-file-path)
+  ;;     (org-mode)
+  ;;     (message "Exporting to JSON: %s" (car command-line-args-left))
+  ;;     (org-export-json)))
+
+  (add-hook 'org-mode-hook
+		'(lambda ()
+               (setq org-file-apps
+					 (append '(
+                               ("\\.png\\'" . "gwenview %s")
+                               ("\\.jpg\\'" . "gwenview %s")
+                               ("\\.jpeg\\'" . "gwenview %s")
+                               ("\\.pdf\\'" . "okular %s")
+                               ("\\.doc\\'" . "lowriter %s")
+                               ("\\.docx\\'" . "lowriter %s")
+                               ("\\.ppt\\'" . "loimpress %s")
+                               ("\\.pptx\\'" . "loimpress %s")
+                               ("\\.xls\\'" . "localc %s")
+                               ("\\.xlsx\\'" . "localc %s")
+                               ) org-file-apps ))))
+
+  (defun org-show-current-heading-tidily ()
+	"Show next entry, keeping other entries closed."
+	(interactive)
+	(if (save-excursion (end-of-line) (outline-invisible-p))
+		(progn (org-show-entry) (show-children))
+      (outline-back-to-heading)
+      (unless (and (bolp) (org-on-heading-p))
+		(org-up-heading-safe)
+		(hide-subtree)
+		(error "Boundary reached"))
+      (org-overview)
+      (org-reveal t)
+      (org-show-entry)
+      (show-children)))
+
+  ;;(setq org-ehtml-docroot (expand-file-name "~/Seafile/org"))
+  ;;(setq org-ehtml-everything-editable t)
+  ;;(require 'org-ehtml)
+  ;;(ws-start org-ehtml-handler 8888)
+
+  (setq org-directory "~/Seafile/org")
+  (setq org-mobile-inbox-for-pull "~/Seafile/org/inbox.org")
+  (setq org-mobile-directory "~/Seafile/mobileorg")
+  (setq org-mobile-files '("~/Seafile/org"))
+
+  (defvar my-org-mobile-sync-timer nil)
+
+  (defvar my-org-mobile-sync-secs (* 60 10))
+
+  (defun my-org-mobile-sync-pull-and-push ()
+	(org-mobile-pull)
+	(org-mobile-push))
+
+  (defun my-org-mobile-sync-start ()
+	"Start automated `org-mobile-push'"
+	(interactive)
+	(setq my-org-mobile-sync-timer
+          (run-with-idle-timer my-org-mobile-sync-secs t
+                               'my-org-mobile-sync-pull-and-push)))
+
+  (defun my-org-mobile-sync-stop ()
+	"Stop automated `org-mobile-push'"
+	(interactive)
+	(cancel-timer my-org-mobile-sync-timer))
+
+  (my-org-mobile-sync-start)
+
+  )
   )
 
-(eval-after-load 'ox ;; shouldn't be byte compiled.
-  '(when (and user-init-file (buffer-file-name)) ;; don't do it in async
-     (setq org-export-async-init-file "~/.emacs.d/init.el")
-     )
+
+  ;; Org Projectile
+  (use-package org-projectile
+	:bind (("C-c n p" . org-projectile:project-todo-completing-read)
+           ("C-c n c" . org-capture))
+	:ensure org
+	:config
+	(setq org-projectile:projects-file "~/Seafile/org/projects.org")
+	(add-to-list 'org-capture-templates (org-projectile:project-todo-entry "p"))
+	(add-to-list 'org-capture-templates (org-projectile:project-todo-entry "l" "* TODO %? %a\n" "Linked Project TODO"))
   )
-
-
-(defun my-add-current-timestamp()
-  (interactive)
-  (insert (format-time-string "%Y-%m-%d %H:%M"))
-  )
-
-
-(defun kiwon/org-agenda-redo-in-other-window ()
-  "Call org-agenda-redo function even in the non-agenda buffer."
-  (interactive)
-  (let ((agenda-window (get-buffer-window org-agenda-buffer-name t)))
-    (when agenda-window
-      (with-selected-window agenda-window (org-agenda-redo)))))
-
-;;(run-at-time nil 60 'kiwon/org-agenda-redo-in-other-window)
-
-;; I don't want to be warned about discarding undo info.
-(unless (boundp 'warning-suppress-types)
-  (setq warning-suppress-types nil))
-(push '(undo discard-info) warning-suppress-types)
-
-;; Provides function to export current org buffer as JSON structure
-;; to $file.org.json. Adapted from an org-mode mailing post by
-;; Brett Viren: https://lists.gnu.org/archive/html/emacs-orgmode/2014-01/msg00338.html
-(require 'json)
-(defun org-export-json ()
-  (interactive)
-  (let* ((tree (org-element-parse-buffer 'object nil)))
-    (org-element-map tree (append org-element-all-elements
-                                  org-element-all-objects '(plain-text))
-      (lambda (x)
-        (if (org-element-property :parent x)
-            (org-element-put-property x :parent "none"))
-        (if (org-element-property :structure x)
-            (org-element-put-property x :structure "none"))
-        ))
-    (write-region
-     (json-encode tree)
-     nil (concat (buffer-file-name) ".json"))))
-
-(defun cli-org-export-json ()
-  (let ((org-file-path (car command-line-args-left))
-        (other-load-files (cdr command-line-args-left)))
-    (mapc 'load-file other-load-files)
-    (find-file org-file-path)
-    (org-mode)
-    (message "Exporting to JSON: %s" (car command-line-args-left))
-    (org-export-json)))
-
-(add-hook 'org-mode-hook
-      '(lambda ()
-             (setq org-file-apps
-                   (append '(
-                             ("\\.png\\'" . "gwenview %s")
-                             ("\\.jpg\\'" . "gwenview %s")
-                             ("\\.jpeg\\'" . "gwenview %s")
-                             ("\\.pdf\\'" . "okular %s")
-                             ("\\.doc\\'" . "lowriter %s")
-                             ("\\.docx\\'" . "lowriter %s")
-                             ("\\.ppt\\'" . "loimpress %s")
-                             ("\\.pptx\\'" . "loimpress %s")
-                             ("\\.xls\\'" . "localc %s")
-                             ("\\.xlsx\\'" . "localc %s")
-                             ) org-file-apps ))))
-
-(defun org-show-current-heading-tidily ()
-  "Show next entry, keeping other entries closed."
-  (interactive)
-  (if (save-excursion (end-of-line) (outline-invisible-p))
-      (progn (org-show-entry) (show-children))
-    (outline-back-to-heading)
-    (unless (and (bolp) (org-on-heading-p))
-      (org-up-heading-safe)
-      (hide-subtree)
-      (error "Boundary reached"))
-    (org-overview)
-    (org-reveal t)
-    (org-show-entry)
-    (show-children)))
-
-;;(setq org-ehtml-docroot (expand-file-name "~/Seafile/org"))
-;;(setq org-ehtml-everything-editable t)
-;;(require 'org-ehtml)
-;;(ws-start org-ehtml-handler 8888)
-
-(setq org-directory "~/Seafile/org")
-(setq org-mobile-inbox-for-pull "~/Seafile/org/inbox.org")
-(setq org-mobile-directory "~/Seafile/mobileorg")
-(setq org-mobile-files '("~/Seafile/org"))
-
-(defvar my-org-mobile-sync-timer nil)
-
-(defvar my-org-mobile-sync-secs (* 60 10))
-
-(defun my-org-mobile-sync-pull-and-push ()
-  (org-mobile-pull)
-  (org-mobile-push))
-
-(defun my-org-mobile-sync-start ()
-  "Start automated `org-mobile-push'"
-  (interactive)
-  (setq my-org-mobile-sync-timer
-        (run-with-idle-timer my-org-mobile-sync-secs t
-                             'my-org-mobile-sync-pull-and-push)))
-
-(defun my-org-mobile-sync-stop ()
-  "Stop automated `org-mobile-push'"
-  (interactive)
-  (cancel-timer my-org-mobile-sync-timer))
-
-(my-org-mobile-sync-start)
 
 #+END_SRC
 
@@ -954,8 +1019,9 @@ M-x compile.
 (use-package yasnippet
   :ensure t
   :diminish yas-minor-mode
+  :defer t
   :mode ("/\\.emacs\\.d/snippets/" . snippet-mode)
-  :init
+  :config
   (progn
     (yas-global-mode 1)))
 #+END_SRC
@@ -1121,7 +1187,6 @@ M-x compile.
 
 (use-package rtags
   :ensure t
-  :demand
   :bind (("C-x C-<" . rtags-location-stack-back)
          ("C-x C-y" . rtags-find-symbol-at-point))
   )
@@ -1319,60 +1384,61 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
-;; https://github.com/Schnouki/dotfiles/blob/master/emacs/init-30-modes.el
-(use-package go-mode
-  :ensure t
-  :mode "\\.go\\'"
-  :commands (godoc gofmt gofmt-before-save)
-  :init
-  (progn
-    (require 'go-mode-autoloads)
-    (setq gofmt-command "goimports")
-    (folding-add-to-marks-list 'go-mode "// {{{" "// }}}" nil t)
-    (defun schnouki/maybe-gofmt-before-save ()
-      (when (eq major-mode 'go-mode)
-	(gofmt-before-save)))
-    (add-hook 'before-save-hook 'schnouki/maybe-gofmt-before-save)
+  ;; https://github.com/Schnouki/dotfiles/blob/master/emacs/init-30-modes.el
+  ;; (use-package go-mode
+  ;;   :ensure t
+  ;;   :mode "\\.go\\'"
+  ;;   :commands (godoc gofmt gofmt-before-save)
+  ;;   :defer t
+  ;;   :config
+  ;;   (progn
+  ;;     (require 'go-mode-autoloads)
+  ;;     (setq gofmt-command "goimports")
+  ;;     (folding-add-to-marks-list 'go-mode "// {{{" "// }}}" nil t)
+  ;;     (defun schnouki/maybe-gofmt-before-save ()
+  ;;       (when (eq major-mode 'go-mode)
+  ;; 	(gofmt-before-save)))
+  ;;     (add-hook 'before-save-hook 'schnouki/maybe-gofmt-before-save)
 
-    ;; From https://github.com/bradleywright/emacs.d
-    ;; Update GOPATH if there's a _vendor (gom) or vendor (gb) dir
-    (defun schnouki/set-local-go-path ()
-      "Sets a local GOPATH if appropriate"
-      (let ((current-go-path (getenv "GOPATH")))
-        (catch 'found
-          (dolist (vendor-dir '("_vendor" "vendor"))
-            (let ((directory (locate-dominating-file (buffer-file-name) vendor-dir)))
-              (when directory
-                (make-local-variable 'process-environment)
-                (let ((local-go-path (concat (expand-file-name directory) vendor-dir)))
-                  (if (not current-go-path)
-                      (setenv "GOPATH" local-go-path)
-                    (unless (string-match-p local-go-path current-go-path)
-                      (setenv "GOPATH" (concat local-go-path ":" current-go-path))))
-                  (setq-local go-command
-                              (concat "GOPATH=\"" local-go-path ":" (expand-file-name directory) ":${GOPATH}\" " go-command))
-                  (throw 'found local-go-path))))))))
-    (add-hook 'go-mode-hook 'schnouki/set-local-go-path))
-  :config
-  (progn
-    ;; http://yousefourabi.com/blog/2014/05/emacs-for-go/
-    (bind-key "C-c C-f" 'gofmt go-mode-map)
-    (bind-key "C-c C-g" 'go-goto-imports go-mode-map)
-    (bind-key "C-c C-k" 'godoc go-mode-map)
-    (bind-key "C-c C-r" 'go-remove-unused-imports go-mode-map)))
+  ;;     ;; From https://github.com/bradleywright/emacs.d
+  ;;     ;; Update GOPATH if there's a _vendor (gom) or vendor (gb) dir
+  ;;     (defun schnouki/set-local-go-path ()
+  ;;       "Sets a local GOPATH if appropriate"
+  ;;       (let ((current-go-path (getenv "GOPATH")))
+  ;;         (catch 'found
+  ;;           (dolist (vendor-dir '("_vendor" "vendor"))
+  ;;             (let ((directory (locate-dominating-file (buffer-file-name) vendor-dir)))
+  ;;               (when directory
+  ;;                 (make-local-variable 'process-environment)
+  ;;                 (let ((local-go-path (concat (expand-file-name directory) vendor-dir)))
+  ;;                   (if (not current-go-path)
+  ;;                       (setenv "GOPATH" local-go-path)
+  ;;                     (unless (string-match-p local-go-path current-go-path)
+  ;;                       (setenv "GOPATH" (concat local-go-path ":" current-go-path))))
+  ;;                   (setq-local go-command
+  ;;                               (concat "GOPATH=\"" local-go-path ":" (expand-file-name directory) ":${GOPATH}\" " go-command))
+  ;;                   (throw 'found local-go-path))))))))
+  ;;     (add-hook 'go-mode-hook 'schnouki/set-local-go-path))
+  ;;   :config
+  ;;   (progn
+  ;;     ;; http://yousefourabi.com/blog/2014/05/emacs-for-go/
+  ;;     (bind-key "C-c C-f" 'gofmt go-mode-map)
+  ;;     (bind-key "C-c C-g" 'go-goto-imports go-mode-map)
+  ;;     (bind-key "C-c C-k" 'godoc go-mode-map)
+  ;;     (bind-key "C-c C-r" 'go-remove-unused-imports go-mode-map)))
 
-(use-package company-go
-  :ensure t
-  :commands company-go
-  :init (add-to-list 'company-backends 'company-go)
-  :config
-  (progn
-    (add-to-list 'company-backends 'company-go)
-    (add-hook 'go-mode-hook 'company-mode)
-    ))
+  (use-package company-go
+	:ensure t
+	:commands company-go
+	:init (add-to-list 'company-backends 'company-go)
+	:config
+	(progn
+      (add-to-list 'company-backends 'company-go)
+      (add-hook 'go-mode-hook 'company-mode)
+      ))
 
-(use-package go-eldoc
-  :ensure t
-  :commands go-eldoc-setup
-  :init (add-hook 'go-mode-hook 'go-eldoc-setup))
+  (use-package go-eldoc
+	:ensure t
+	:commands go-eldoc-setup
+	:init (add-hook 'go-mode-hook 'go-eldoc-setup))
 #+END_SRC
