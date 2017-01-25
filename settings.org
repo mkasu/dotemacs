@@ -372,19 +372,19 @@
 
 #+BEGIN_SRC emacs-lisp
 ;; 日本語入力
-(use-package mozc
-  :config
-  (require 'mozc)
-
-  (set-language-environment "Japanese")
-  (setq default-input-method "japanese-mozc")
-
-  (global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method)
-
-  (add-hook 'mozc-mode-hook
-   (lambda()
-     (define-key mozc-mode-map (kbd "<zenkaku-hankaku>") 'toggle-input-method)))
-  )
+;(use-package mozc
+;  :config
+;  (require 'mozc)
+;
+;  (set-language-environment "Japanese")
+;  (setq default-input-method "japanese-mozc")
+;
+;  (global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method)
+;
+;  (add-hook 'mozc-mode-hook
+;   (lambda()
+;     (define-key mozc-mode-map (kbd "<zenkaku-hankaku>") 'toggle-input-method)))
+;  )
 #+END_SRC
 
 *** Miscellaneous
@@ -689,10 +689,14 @@ SCHEDULED: %^t
                    (append '(
                              ("\\.png\\'" . "gwenview %s")
                              ("\\.jpg\\'" . "gwenview %s")
+                             ("\\.jpeg\\'" . "gwenview %s")
                              ("\\.pdf\\'" . "okular %s")
+                             ("\\.doc\\'" . "lowriter %s")
                              ("\\.docx\\'" . "lowriter %s")
                              ("\\.ppt\\'" . "loimpress %s")
+                             ("\\.pptx\\'" . "loimpress %s")
                              ("\\.xls\\'" . "localc %s")
+                             ("\\.xlsx\\'" . "localc %s")
                              ) org-file-apps ))))
 
 (defun org-show-current-heading-tidily ()
@@ -710,10 +714,37 @@ SCHEDULED: %^t
     (org-show-entry)
     (show-children)))
 
-(setq org-ehtml-docroot (expand-file-name "~/Seafile/org"))
-(setq org-ehtml-everything-editable t)
-(require 'org-ehtml)
-(ws-start org-ehtml-handler 8888)
+;;(setq org-ehtml-docroot (expand-file-name "~/Seafile/org"))
+;;(setq org-ehtml-everything-editable t)
+;;(require 'org-ehtml)
+;;(ws-start org-ehtml-handler 8888)
+
+(setq org-directory "~/Seafile/org")
+(setq org-mobile-inbox-for-pull "~/Seafile/org/inbox.org")
+(setq org-mobile-directory "~/Seafile/mobileorg")
+(setq org-mobile-files '("~/Seafile/org"))
+
+(defvar my-org-mobile-sync-timer nil)
+
+(defvar my-org-mobile-sync-secs (* 60 10))
+
+(defun my-org-mobile-sync-pull-and-push ()
+  (org-mobile-pull)
+  (org-mobile-push))
+
+(defun my-org-mobile-sync-start ()
+  "Start automated `org-mobile-push'"
+  (interactive)
+  (setq my-org-mobile-sync-timer
+        (run-with-idle-timer my-org-mobile-sync-secs t
+                             'my-org-mobile-sync-pull-and-push)))
+
+(defun my-org-mobile-sync-stop ()
+  "Stop automated `org-mobile-push'"
+  (interactive)
+  (cancel-timer my-org-mobile-sync-timer))
+
+(my-org-mobile-sync-start)
 
 #+END_SRC
 
@@ -1169,14 +1200,15 @@ M-x compile.
   :config
   (progn
     (setq elpy-rpc-backend "jedi")
-    (setq elpy-rpc-python-command "python")
+    (setq elpy-rpc-python-command "python3.5")
+    (pyvenv-activate (expand-file-name "/home/kastnerm_/.pyenv/versions/anaconda3-4.1.1"))
     (setq pyenv-show-active-python-in-modeline t)
     (require 'pyenv-mode-auto)
 
-    ;;(setq jedi:environment-root "env")
-    ;;(setq jedi:environment-virtualenv
-    ;;      (append python-environment-virtualenv
-    ;;              '("--python" "python3")))
+    ;(setq jedi:environment-root "env")
+    ;(setq jedi:environment-virtualenv
+    ;      (append python-environment-virtualenv
+    ;              '("--python" "/home/kastnerm_/.pyenv/versions/anaconda3-4.1.1/bin/python3")))
     )
   )
 #+END_SRC

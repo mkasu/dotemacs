@@ -8,6 +8,12 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
+;; This file contains encryption keys etc. and won't be uploaded to repositories.
+(setq secret-file "~/.emacs.d/secret.el")
+
+(when (file-exists-p secret-file)
+    (load secret-file))
+
 ;; User Info
 (setq user-full-name "Marc A. Kastner")
 (setq user-mail-address "marc@mkasu.org")
