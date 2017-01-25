@@ -36,3 +36,5 @@ wl.el
 scripts/
 .gitmodules
 dict/
+
+secret.el
