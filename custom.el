@@ -5,6 +5,11 @@
  ;; If there is more than one, they won't work right.
  '(LaTeX-command "latex -synctex=1")
  '(TeX-source-correlate-mode t)
+ '(TeX-view-program-list
+   (quote
+	(("Okular"
+	  ("okular --unique \\\"file:\\\"%s.pdf\\\"#src:%n %a\\\"")
+	  ""))))
  '(company-quickhelp-color-background "#4e4e4e")
  '(company-quickhelp-color-foreground "#5fafd7")
  '(company-quickhelp-delay 0.1)
@@ -12,16 +17,16 @@
  '(company-quickhelp-use-propertized-text t)
  '(elpy-modules
    (quote
-    (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
+	(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
  '(minimap-hide-fringes t)
  '(minimap-mode t)
  '(minimap-window-location (quote right))
  '(org-agenda-files
    (quote
-    ("/home1/kastnerm/Seafile/org/emacs.org" "/home1/kastnerm/Seafile/org/gm.org" "/home1/kastnerm/Seafile/org/inbox.org" "/home1/kastnerm/Seafile/org/phd-diary.org" "/home1/kastnerm/Seafile/org/test.org")))
+	("/home1/kastnerm/Seafile/org/emacs.org" "/home1/kastnerm/Seafile/org/gm.org" "/home1/kastnerm/Seafile/org/inbox.org" "/home1/kastnerm/Seafile/org/phd-diary.org" "/home1/kastnerm/Seafile/org/test.org")))
  '(package-selected-packages
    (quote
-    (minimap company-quickhelp json-mode pkgbuild-mode git-gutter mozc htmlize company go-mode helm helm-core jedi-core markdown-mode projectile python-environment pythonic swiper pcache org helm-projectile use-package org-ehtml org-preview-html framemove deft company-statistics hl-todo highlight-indentation highlight-chars xpm wanderlust undo-tree swiper-helm spaceline rtags robe pyenv-mode-auto popwin paradox org-projectile moe-theme migemo magit jade-mode helm-ag haml-mode go-eldoc glsl-mode flycheck elpy dracula-theme desktop+ darkokai-theme d-mode company-jedi company-irony company-go color-theme-sanityinc-tomorrow cmake-mode cmake-ide clang-format auctex)))
+	(langtool minimap company-quickhelp json-mode pkgbuild-mode git-gutter mozc htmlize company go-mode helm helm-core jedi-core markdown-mode projectile python-environment pythonic swiper pcache org helm-projectile use-package org-ehtml org-preview-html framemove deft company-statistics hl-todo highlight-indentation highlight-chars xpm wanderlust undo-tree swiper-helm spaceline rtags robe pyenv-mode-auto popwin paradox org-projectile moe-theme migemo magit jade-mode helm-ag haml-mode go-eldoc glsl-mode flycheck elpy dracula-theme desktop+ darkokai-theme d-mode company-jedi company-irony company-go color-theme-sanityinc-tomorrow cmake-mode cmake-ide clang-format auctex)))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
