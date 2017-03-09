@@ -812,17 +812,30 @@ SCHEDULED: %^t
 
 #+BEGIN_SRC emacs-lisp
 ;; AucTeX
-(use-package tex
-  :ensure auctex
-  :config
-    (setq TeX-auto-save t)
-    (setq TeX-parse-self t)
-    (setq-default TeX-master nil)
-    (setq-default TeX-PDF-mode t)
-    (setq TeX-source-correlate-method 'synctex)
-    (custom-set-variables '(LaTeX-command "latex -synctex=1") )
+;;(use-package tex-site
+;;  :ensure auctex
+;;  :config
+;;    (setq TeX-auto-save t)
+;;    (setq TeX-parse-self t)
+;;    (setq-default TeX-master nil)
+;;    (setq-default TeX-PDF-mode t)
+;;    (setq TeX-source-correlate-method 'synctex)
+;;    (custom-set-variables '(LaTeX-command "latex -synctex=1") )
+;;)
 
-)
+;; switched to auctex-git because elpa version currently seems to have
+;; issues with japanese locale on my system ugly, as this does not auto-
+;; install on new systems and might lead to errors though
+(load "auctex.el" nil t t)
+(load "preview-latex.el" nil t t)
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+(setq-default TeX-PDF-mode t)
+(setq TeX-source-correlate-method 'synctex)
+(custom-set-variables '(LaTeX-command "latex -synctex=1") )
+
+
 #+END_SRC
 
 ** Langtool
@@ -1335,9 +1348,9 @@ M-x compile.
   :commands (godoc gofmt gofmt-before-save)
   :init
   (progn
-    (require 'go-mode-autoloads)
+    ;;(require 'go-mode-autoloads)
     (setq gofmt-command "goimports")
-    (folding-add-to-marks-list 'go-mode "// {{{" "// }}}" nil t)
+    ;;(folding-add-to-marks-list 'go-mode "// {{{" "// }}}" nil t)
     (defun schnouki/maybe-gofmt-before-save ()
       (when (eq major-mode 'go-mode)
 	(gofmt-before-save)))
