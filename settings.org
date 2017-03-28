@@ -23,13 +23,9 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 (if (display-graphic-p)
     (progn
-      ;; Splash Screen to Org-mode
-      (setq inhibit-splash-screen t
-            initial-scratch-message nil
-            initial-major-mode 'org-mode)
-
       (set-face-attribute 'default nil
                           ;;:family "Source Code Pro" ;; no Japanese glyphs
                           ;;:family "Source Han Code JP" ;; I dislike the proportion of Japanese glyphs to rest
@@ -39,48 +35,30 @@
                           :height 123 ;; Size is mainly due to Retina display
                           :weight 'normal
                           :width 'normal)
-
-      ;; (set-fontset-font (frame-parameter nil 'font)
-      ;;                   'japanese-jisx0208
-      ;;                   (cons "Ricty Diminished" "iso10646-1"))
-      ;; (set-fontset-font (frame-parameter nil 'font)
-      ;;                   'japanese-jisx0212
-      ;;                   (cons "Ricty Diminished" "iso10646-1"))
-      ;; (set-fontset-font (frame-parameter nil 'font)
-      ;;                   'katakana-jisx0201
-      ;;                   (cons "Ricty Diminished" "iso10646-1"))
-
-      ;; Custom themes
-      (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-
-      ;; Theme
-      ;;(load-theme 'wombat t)
-      ;;(load-theme 'dracula t)
-      ;;(load-theme 'sanityinc-tomorrow-eighties t)
-
-      ;;(moe-theme-set-color 'cyan)
-      ;;(moe-dark)
-
-      (require 'color)
-
-      (let ((bg (face-attribute 'default :background)))
-        (custom-set-faces
-         `(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
-         `(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
-         `(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
-         `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
-         `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
-      )
-
   )
+)
 
 #+END_SRC
 
 
 *** Theme
-
-
 #+BEGIN_SRC emacs-lisp
+;;(load-theme 'wombat t)
+;;(load-theme 'dracula t)
+;;(load-theme 'sanityinc-tomorrow-eighties t)
+
+;; Custom themes
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(require 'color)
+
+(let ((bg (face-attribute 'default :background)))
+(custom-set-faces
+`(company-tooltip ((t (:inherit default :background ,(color-lighten-name bg 10)))))
+`(company-scrollbar-bg ((t (:background ,(color-lighten-name bg 10)))))
+`(company-scrollbar-fg ((t (:background ,(color-lighten-name bg 5)))))
+`(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+`(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
+
 (use-package moe-theme                     ; Theme
   :ensure t
   :config
@@ -116,8 +94,16 @@
 
 *** Miscellaneous
 
-
 #+BEGIN_SRC emacs-lisp
+
+(if (display-graphic-p)
+    (progn
+      ;; Splash Screen to Org-mode
+      (setq inhibit-splash-screen t
+            initial-scratch-message nil
+            initial-major-mode 'org-mode)
+  )
+)
 
 ;; Line Numbers
 (global-linum-mode t)
@@ -143,11 +129,13 @@
 *** Recent files
 
 #+BEGIN_SRC emacs-lisp
+
 (setq recentf-exclude '("^/var/folders\\.*"
                         "COMMIT_EDITMSG\\'"
                         ".*-autoloads\\.el\\'"
                         "[/\\]\\.elpa/"
                         ))
+
 #+END_SRC
 
 
@@ -156,11 +144,13 @@
 
 #+BEGIN_SRC emacs-lisp
 ;; Start server
+
 (if (display-graphic-p)
     (progn
       (server-start)
       )
     )
+
 #+END_SRC
 
 
@@ -168,6 +158,7 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 (defvar --backup-directory (concat user-emacs-directory "backups"))
 (if (not (file-exists-p --backup-directory))
         (make-directory --backup-directory t))
@@ -178,14 +169,13 @@
   kept-new-versions 9
   kept-old-versions 6
   version-control t)
+
 #+END_SRC
 
 
 *** Terminal
 
-
 #+BEGIN_SRC emacs-lisp
-
 ;; Terminal
 ;; (defun popwin-term:ansi-term ()
 ;;   (interactive)
@@ -203,10 +193,12 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; 4 spaces for tab
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq indent-line-function 'insert-tab)
+
 #+END_SRC
 
 
@@ -214,6 +206,7 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package framemove
     :ensure t
     :config
@@ -222,15 +215,15 @@
     )
 )
 
-
 (windmove-default-keybindings 'super)
+
 #+END_SRC
 
 
 *** Popwin
 
-
 #+BEGIN_SRC emacs-lisp
+
 (use-package popwin
   :ensure t
   :config
@@ -263,6 +256,7 @@
       (eshell-send-input)
       (end-of-buffer))))
 (global-set-key (kbd "C-c t") 'eshell-pop)
+
 #+END_SRC
 
 
@@ -270,6 +264,7 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package helm
           :diminish helm-mode
           :ensure t
@@ -296,6 +291,7 @@
 *** Undo Tree
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package undo-tree
   :diminish undo-tree-mode
   :init (global-undo-tree-mode)
@@ -306,6 +302,7 @@
     (global-set-key (kbd "C-z") 'undo)
     )
   )
+
 #+END_SRC
 
 
@@ -313,9 +310,11 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package paradox
   :ensure t
   )
+
 #+END_SRC
 
 
@@ -323,17 +322,21 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package desktop+
   :ensure t)
+
 #+END_SRC
 
 *** Winner
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package winner
   :init
   (winner-mode))
+
 #+END_SRC
 
 
@@ -341,6 +344,7 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 (prefer-coding-system                   'utf-8)
 (set-language-environment               'utf-8)
 (set-default-coding-systems             'utf-8)
@@ -353,6 +357,7 @@
 (set-selection-coding-system            'utf-8)
 (setq default-process-coding-system     '(utf-8 . utf-8))
 (add-to-list 'auto-coding-alist         '("." . utf-8))
+
 #+END_SRC
 
 
@@ -362,6 +367,7 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; ローマ字で日本語の検索
 (use-package migemo
   :ensure t
@@ -375,6 +381,7 @@
   (setq migemo-options '("-q" "--emacs"))
   (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
   (migemo-init))
+
 #+END_SRC
 
 
@@ -382,6 +389,7 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; 日本語入力
 ;(use-package mozc
 ;  :config
@@ -396,6 +404,7 @@
 ;   (lambda()
 ;     (define-key mozc-mode-map (kbd "<zenkaku-hankaku>") 'toggle-input-method)))
 ;  )
+
 #+END_SRC
 
 *** Miscellaneous
@@ -446,6 +455,7 @@
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package org
   :ensure t
   :bind ("C-c a" . org-agenda)
@@ -804,6 +814,7 @@ SCHEDULED: %^t
         "platex %f"
         "platex %f"
         "dvipdfmx %b.dvi")))
+
 #+END_SRC
 
 
@@ -811,6 +822,7 @@ SCHEDULED: %^t
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; AucTeX
 ;;(use-package tex-site
 ;;  :ensure auctex
@@ -842,6 +854,7 @@ SCHEDULED: %^t
 
 
 #+BEGIN_SRC emacs-lisp
+
   ;; Langtool
   ;; (use-package langtool
   ;;   :ensure t
@@ -876,6 +889,7 @@ SCHEDULED: %^t
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package deft
   :ensure t
   :bind ("C-c d" . deft)
@@ -917,6 +931,7 @@ SCHEDULED: %^t
   )
 
 (global-set-key (kbd "C-c q") 'bjm-quit-deft)
+
 #+END_SRC
 
 
@@ -927,6 +942,7 @@ SCHEDULED: %^t
 *** Hotkeys
 
 #+BEGIN_SRC emacs-lisp
+
 ;; == Recompile Hotkey ==
 (global-set-key (kbd "C-c c") 'compile-again)
 (setq compilation-last-buffer nil)
@@ -943,6 +959,7 @@ M-x compile.
        (set-buffer compilation-last-buffer)
        (revert-buffer t t))
    (call-interactively 'compile)))
+
 #+END_SRC
 
 
@@ -950,6 +967,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; == highlight TODO/FIXME etc. ==
 (use-package hl-todo
   :ensure t
@@ -971,12 +989,14 @@ M-x compile.
     ("XXXX"  . "#cc9393")
     ("???"   . "#cc9393")))
 )
+
 #+END_SRC
 
 
 *** Yasnippet
 
 #+BEGIN_SRC emacs-lisp
+
 ;; == yasnippet ==
 (use-package yasnippet
   :ensure t
@@ -985,6 +1005,7 @@ M-x compile.
   :init
   (progn
     (yas-global-mode 1)))
+
 #+END_SRC
 
 
@@ -992,6 +1013,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; == company-mode ==
 (use-package company
   :ensure t
@@ -1012,6 +1034,7 @@ M-x compile.
     (add-hook 'after-init-hook 'company-statistics-mode))
   :bind ("C-;" . company-complete-common)
   )
+
 #+END_SRC
 
 
@@ -1019,6 +1042,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; == projectile ==
 (use-package projectile
   :ensure t
@@ -1033,6 +1057,7 @@ M-x compile.
     (helm-projectile-on)
     )
   )
+
 #+END_SRC
 
 
@@ -1040,12 +1065,13 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
-;; == swiper ==
 
+;; == swiper ==
 (use-package swiper-helm
   :ensure t
   :bind ("C-c C-g" . swiper)
   )
+
 #+END_SRC
 
 
@@ -1053,6 +1079,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; == magit ==
 (use-package magit
   :ensure t
@@ -1062,6 +1089,7 @@ M-x compile.
           (magit-diff-use-overlays nil)
           )
   )
+
 #+END_SRC
 
 
@@ -1069,6 +1097,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; == flycheck ==
 (use-package flycheck
   :ensure t
@@ -1088,6 +1117,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 (setq c-default-style "stroustrup")
 (setq c-basic-offset 4)
 
@@ -1116,6 +1146,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; == irony-mode ==
 (use-package irony
   :ensure t
@@ -1138,6 +1169,7 @@ M-x compile.
     (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
     )
   )
+
 #+END_SRC
 
 
@@ -1160,6 +1192,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package cmake-ide
   :ensure t
   :init
@@ -1170,6 +1203,7 @@ M-x compile.
   :ensure t
   :mode (("/CMakeLists\\.txt\\'" . cmake-mode)
 	 ("\\.cmake\\'" . cmake-mode)))
+
 #+END_SRC
 
 
@@ -1177,11 +1211,13 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package clang-format
   :ensure t
   :bind (("C-M-<tab>" . clang-format-buffer)
     )
   )
+
 #+END_SRC
 
 
@@ -1190,6 +1226,7 @@ M-x compile.
 *** General
 
 #+BEGIN_SRC emacs-lisp
+
 (add-hook 'python-mode-hook
           (lambda ()
 		    (setq-default indent-tabs-mode t)
@@ -1204,6 +1241,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 (use-package company-jedi
   :ensure t
   :config
@@ -1211,6 +1249,7 @@ M-x compile.
     (add-to-list 'company-backends 'company-jedi)
     )
   )
+
 #+END_SRC
 
 
@@ -1218,6 +1257,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 (add-to-list 'package-archives
              '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 (unless package-archive-contents
@@ -1237,6 +1277,7 @@ M-x compile.
 
 (use-package pyenv-mode-auto
    :ensure t)
+
 #+END_SRC
 
 
@@ -1244,6 +1285,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 (defun company-yasnippet-or-completion ()
   "Solve company yasnippet conflicts."
   (interactive)
@@ -1279,6 +1321,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
   ;; == glsl ==
   ;; (use-package glsl-mode
   ;;   :ensure t
@@ -1296,6 +1339,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
 ;; == swift mode ==
 ;(use-package swift-mode
 ;  :ensure t
@@ -1338,6 +1382,7 @@ M-x compile.
   ;; (use-package haml-mode
   ;;   :ensure t
   ;;   :mode "\\.haml\\'")
+
 #+END_SRC
 
 
@@ -1345,6 +1390,7 @@ M-x compile.
 
 
 #+BEGIN_SRC emacs-lisp
+
   ;; https://github.com/Schnouki/dotfiles/blob/master/emacs/init-30-modes.el
   ;; (use-package go-mode
   ;;   :ensure t
@@ -1401,4 +1447,5 @@ M-x compile.
   ;;   :ensure t
   ;;   :commands go-eldoc-setup
   ;;   :init (add-hook 'go-mode-hook 'go-eldoc-setup))
+
 #+END_SRC
