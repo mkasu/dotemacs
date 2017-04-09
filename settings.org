@@ -740,32 +740,32 @@ SCHEDULED: %^t
 ;;(require 'org-ehtml)
 ;;(ws-start org-ehtml-handler 8888)
 
-(setq org-directory "~/Dropbox/Research/org")
-(setq org-mobile-inbox-for-pull "~/Dropbox/Research/org/inbox.org")
-(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-(setq org-mobile-files '("~/Dropbox/Research/org"))
+;(setq org-directory "~/Dropbox/Research/org")
+;(setq org-mobile-inbox-for-pull "~/Dropbox/Research/org/inbox.org")
+;(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+;(setq org-mobile-files '("~/Dropbox/Research/org"))
 
-(defvar my-org-mobile-sync-timer nil)
+;(defvar my-org-mobile-sync-timer nil)
 
-(defvar my-org-mobile-sync-secs (* 60 10))
+;(defvar my-org-mobile-sync-secs (* 60 10))
 
-(defun my-org-mobile-sync-pull-and-push ()
-  (org-mobile-pull)
-  (org-mobile-push))
+;(defun my-org-mobile-sync-pull-and-push ()
+;  (org-mobile-pull)
+;  (org-mobile-push))
 
-(defun my-org-mobile-sync-start ()
-  "Start automated `org-mobile-push'"
-  (interactive)
-  (setq my-org-mobile-sync-timer
-        (run-with-idle-timer my-org-mobile-sync-secs t
-                             'my-org-mobile-sync-pull-and-push)))
+;(defun my-org-mobile-sync-start ()
+;  "Start automated `org-mobile-push'"
+;  (interactive)
+;  (setq my-org-mobile-sync-timer
+;        (run-with-idle-timer my-org-mobile-sync-secs t
+;                             'my-org-mobile-sync-pull-and-push)))
 
-(defun my-org-mobile-sync-stop ()
-  "Stop automated `org-mobile-push'"
-  (interactive)
-  (cancel-timer my-org-mobile-sync-timer))
+;(defun my-org-mobile-sync-stop ()
+;  "Stop automated `org-mobile-push'"
+;  (interactive)
+;  (cancel-timer my-org-mobile-sync-timer))
 
-(my-org-mobile-sync-start)
+;(my-org-mobile-sync-start)
 
 #+END_SRC
 
